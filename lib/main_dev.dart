@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:uet_comic/config_wraper.dart';
-import 'package:uet_comic/main.dart';
-import 'package:uet_comic/src/env/dev.dart';
-import 'package:uet_comic/src/models/config.dart';
+import 'package:uet_comic/app.dart';
+import 'package:uet_comic/provider_setup.dart' as ProviderSetup;
+import 'package:uet_comic/src/core/models/config.dart';
+import 'package:uet_comic/src/core/env/dev.dart';
 
-void main() => runApp(
-    ConfigWrapper(config: Config.fromJson(config), child: MyApp()));
+void main() => runApp(UetComicApp(providers: ProviderSetup.getProviders(Config.fromJson(config))));
