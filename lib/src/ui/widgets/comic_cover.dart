@@ -1,17 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:uet_comic/src/core/models/comic_cover.dart';
+import 'package:uet_comic/src/ui/widgets/responsive_grid.dart';
 
-class ComicCoverWidget extends StatelessWidget {
+typedef ChoosedComic(String idComic);
+
+class ComicCoverList extends StatelessWidget {
+  final List<ComicCover> comicCovers;
+  final ChoosedComic choosedComic;
+
+  ComicCoverList({Key key, @required this.comicCovers, this.choosedComic}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ResponsiveGridList(
+      desiredItemWidth: 100,
+      minSpacing: 10,
+      children: List.generate(
+        comicCovers.length,
+        (index) => InkWell(
+          onTap: () {
+            choosedComic(comicCovers[index].id);
+          },
+          child: ComicCoverItem(
+          comicCover: comicCovers[index],
+        ),
+        )
+      ),
+    );
+  }
+}
+
+class ComicCoverItem extends StatelessWidget {
   final ComicCover comicCover;
-  final double imageAspectRatio;
-  static final kTextBoxHeight = 65.0;
+  // final
 
-  ComicCoverWidget(
-      {Key key, @required this.comicCover, this.imageAspectRatio: 33 / 49})
-      : assert(comicCover != null),
-        assert(imageAspectRatio == null || imageAspectRatio > 0),
-        super(key: key);
+  ComicCoverItem({Key key, @required this.comicCover}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -19,11 +43,11 @@ class ComicCoverWidget extends StatelessWidget {
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
-      // crossAxisAlignment: CrossAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
-        SizedBox(
+        Hero(
+          tag: comicCover.id,
           child: Card(
-            // color: Colors.black,
             semanticContainer: true,
             clipBehavior: Clip.antiAliasWithSaveLayer,
             child: Stack(
@@ -33,7 +57,7 @@ class ComicCoverWidget extends StatelessWidget {
                   fit: BoxFit.fill,
                 ),
                 // TopNoTiceWidget(text: "${comicCover.lastUpdate}"),
-                TopNoTiceWidget(text: "11 phut truoc"),
+                // TopNoTiceWidget(text: "11 phut truoc"),
               ],
             ),
             shape: RoundedRectangleBorder(
@@ -42,28 +66,20 @@ class ComicCoverWidget extends StatelessWidget {
             elevation: 5,
             margin: EdgeInsets.all(10),
           ),
-          width: 150,
         ),
-        SizedBox(
-          child: Column(
-            children: <Widget>[
-              Text(
-                comicCover.name,
-                style: theme.textTheme.caption,
-                textAlign: TextAlign.center,
-                overflow: TextOverflow.ellipsis,
-                maxLines: 2,
-              ),
-              Text(
-                "Chuong ${comicCover.lastChapter}",
-                style: theme.textTheme.caption,
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
-              ),
-            ],
-          ),
-          width: 100,
-        )
+        Text(
+          comicCover.name,
+          style: theme.textTheme.caption,
+          textAlign: TextAlign.center,
+          overflow: TextOverflow.ellipsis,
+          maxLines: 2,
+        ),
+        Text(
+          "Chuong ${comicCover.lastChapter}",
+          style: theme.textTheme.caption,
+          overflow: TextOverflow.ellipsis,
+          maxLines: 1,
+        ),
       ],
     );
   }

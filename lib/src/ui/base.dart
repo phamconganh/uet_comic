@@ -1,12 +1,12 @@
 // import 'package:bottom_navy_bar/bottom_navy_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:uet_comic/src/core/services/api.dart';
-import 'package:uet_comic/src/ui/views/account.dart';
+// import 'package:provider/provider.dart';
+// import 'package:uet_comic/src/core/services/api.dart';
+// import 'package:uet_comic/src/ui/views/account.dart';
 import 'package:uet_comic/src/ui/views/downloaded.dart';
 import 'package:uet_comic/src/ui/views/home.dart';
 import 'package:uet_comic/src/ui/views/search.dart';
-import 'package:uet_comic/src/ui/views/settings.dart';
+// import 'package:uet_comic/src/ui/views/settings.dart';
 import 'package:english_words/english_words.dart' as words;
 import 'package:uet_comic/src/ui/widgets/bottom_nav_bar.dart';
 import 'package:uet_comic/src/ui/widgets/search_app_bar.dart';
@@ -135,7 +135,6 @@ class _BasePageState extends State<BasePage> {
 
   @override
   Widget build(BuildContext context) {
-    print(Provider.of<Api>(context).apiURL);
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(45.0), // here the desired height

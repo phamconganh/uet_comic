@@ -4,11 +4,12 @@ import 'package:json_annotation/json_annotation.dart';
 
 @JsonSerializable()
 class ComicDetail {
-  final String env;
-  final bool production;
-  final String apiKey;
+  final String name;
+  final int lastChapter;
+  final DateTime lastUpdate;
+  final String imageLink;
 
-  ComicDetail({this.env, this.production, this.apiKey});
+  ComicDetail({this.name, this.lastChapter, this.lastUpdate, this.imageLink});
 
   // factory Config.fromJson(Map<String, dynamic> json) => _$ConfigFromJson(json);
 }
