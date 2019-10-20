@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "844556356651",
+    "firebase_url": "https://uet-comic-4ca04.firebaseio.com",
+    "project_id": "uet-comic-4ca04",
+    "storage_bucket": "uet-comic-4ca04.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:844556356651:android:0527a01dbe91ae02c86e6e",
+        "android_client_info": {
+          "package_name": "com.example.uet_comic"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "844556356651-7e753lrhebb5fomq1g6aqq597oaiujc8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.uet_comic",
+            "certificate_hash": "1d80db803ef5dae83bad378eff4051dda575a462"
+          }
+        },
+        {
+          "client_id": "844556356651-qst10g80e74a2ohv3j1haa9u2j4o76pk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCGMBrJsA95Jf7ri_9Ff5FQpmYsM72fUGo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "844556356651-qst10g80e74a2ohv3j1haa9u2j4o76pk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

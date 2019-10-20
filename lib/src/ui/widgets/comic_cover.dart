@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:uet_comic/src/core/models/comic_cover.dart';
+import 'package:uet_comic/src/ui/shared/type_def.dart';
+import 'package:uet_comic/src/ui/widgets/card_image.dart';
 import 'package:uet_comic/src/ui/widgets/responsive_grid.dart';
-
-typedef ChoosedComic(String idComic);
 
 class ComicCoverList extends StatelessWidget {
   final List<ComicCover> comicCovers;
-  final ChoosedComic choosedComic;
+  final StringCallback choosedComic;
 
-  ComicCoverList({Key key, @required this.comicCovers, this.choosedComic}) : super(key: key);
+  ComicCoverList({Key key, @required this.comicCovers, this.choosedComic})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -17,23 +18,21 @@ class ComicCoverList extends StatelessWidget {
       desiredItemWidth: 100,
       minSpacing: 10,
       children: List.generate(
-        comicCovers.length,
-        (index) => InkWell(
-          onTap: () {
-            choosedComic(comicCovers[index].id);
-          },
-          child: ComicCoverItem(
-          comicCover: comicCovers[index],
-        ),
-        )
-      ),
+          comicCovers.length,
+          (index) => InkWell(
+                onTap: () {
+                  choosedComic(comicCovers[index].id);
+                },
+                child: ComicCoverItem(
+                  comicCover: comicCovers[index],
+                ),
+              )),
     );
   }
 }
 
 class ComicCoverItem extends StatelessWidget {
   final ComicCover comicCover;
-  // final
 
   ComicCoverItem({Key key, @required this.comicCover}) : super(key: key);
 
@@ -47,24 +46,8 @@ class ComicCoverItem extends StatelessWidget {
       children: <Widget>[
         Hero(
           tag: comicCover.id,
-          child: Card(
-            semanticContainer: true,
-            clipBehavior: Clip.antiAliasWithSaveLayer,
-            child: Stack(
-              children: <Widget>[
-                Image.network(
-                  comicCover.imageLink,
-                  fit: BoxFit.fill,
-                ),
-                // TopNoTiceWidget(text: "${comicCover.lastUpdate}"),
-                // TopNoTiceWidget(text: "11 phut truoc"),
-              ],
-            ),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10.0),
-            ),
-            elevation: 5,
-            margin: EdgeInsets.all(10),
+          child: CardImage(
+            imageLink: comicCover.imageLink,
           ),
         ),
         Text(

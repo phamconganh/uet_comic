@@ -42,9 +42,10 @@ class _HomePageState extends State<HomePage> {
               )
             : ListView(
                 children: <Widget>[
+                  const Divider(),
                   const ListTile(
-                    leading: Icon(Icons.fiber_new, color: Colors.blue),
-                    title: Text(
+                    leading: const Icon(Icons.fiber_new, color: Colors.blue),
+                    title: const Text(
                       "Truyện mới cập nhật",
                       style: TextStyle(color: Colors.blue),
                       overflow: TextOverflow.ellipsis,
@@ -58,12 +59,13 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ],
                   ),
+                  const Divider(),
                   const ListTile(
-                    leading: Icon(
+                    leading: const Icon(
                       FontAwesomeIcons.male,
                       color: Colors.red,
                     ),
-                    title: Text(
+                    title: const Text(
                       "Truyện con trai",
                       style: TextStyle(color: Colors.red),
                       overflow: TextOverflow.ellipsis,
@@ -77,12 +79,13 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ],
                   ),
+                  const Divider(),
                   const ListTile(
-                    leading: Icon(
+                    leading: const Icon(
                       FontAwesomeIcons.female,
                       color: Colors.orange,
                     ),
-                    title: Text(
+                    title: const Text(
                       "Truyện con gái",
                       style: TextStyle(color: Colors.orange),
                       overflow: TextOverflow.ellipsis,

@@ -136,35 +136,32 @@ class _BasePageState extends State<BasePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(45.0), // here the desired height
-        child: AppBar(
-          automaticallyImplyLeading: false,
-          title: Text(widget.title),
-          actions: <Widget>[
-            //Adding the search widget in AppBar
-            IconButton(
-              tooltip: 'Search',
-              icon: Icon(
-                Icons.search,
-              ),
-              //Don't block the main thread
-              onPressed: () {
-                showSearchPage(context, _searchDelegate);
-              },
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: Text(widget.title),
+        actions: <Widget>[
+          //Adding the search widget in AppBar
+          IconButton(
+            tooltip: 'Search',
+            icon: Icon(
+              Icons.search,
             ),
-            IconButton(
-              tooltip: 'Account and Settings',
-              icon: Icon(
-                Icons.account_circle,
-              ),
-              //Don't block the main thread
-              onPressed: () {
-                // showSearchPage(context, _searchDelegate);
-              },
+            //Don't block the main thread
+            onPressed: () {
+              showSearchPage(context, _searchDelegate);
+            },
+          ),
+          IconButton(
+            tooltip: 'Account and Settings',
+            icon: Icon(
+              Icons.account_circle,
             ),
-          ],
-        ),
+            //Don't block the main thread
+            onPressed: () {
+              // showSearchPage(context, _searchDelegate);
+            },
+          ),
+        ],
       ),
       body: PageView(
         controller: pageController,
@@ -172,19 +169,15 @@ class _BasePageState extends State<BasePage> {
         children: bodyList,
         physics: ClampingScrollPhysics(),
       ),
-      bottomNavigationBar: PreferredSize(
-        preferredSize: Size.fromHeight(45.0), // here the desired height
-        child: BottomNavyBar(
-          selectedIndex: _selectedIndex,
-          showElevation: true, // use this to remove appBar's elevation
-          onItemSelected: (index) => setState(() {
-            _selectedIndex = index;
-            pageController.animateToPage(index,
-                duration: Duration(milliseconds: 300), curve: Curves.ease);
-          }),
-          items: items,
-          height: 45.0,
-        ),
+      bottomNavigationBar: BottomNavyBar(
+        selectedIndex: _selectedIndex,
+        showElevation: true, // use this to remove appBar's elevation
+        onItemSelected: (index) => setState(() {
+          _selectedIndex = index;
+          pageController.animateToPage(index,
+              duration: Duration(milliseconds: 300), curve: Curves.ease);
+        }),
+        items: items,
       ),
     );
   }
