@@ -53,9 +53,13 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
     print("Like comic id ${widget.idComic}");
   }
 
-  // void onLoadMoreChapter() {
-  //   print("onLoadMoreChapter comic id ${widget.idComic}");
-  // }
+  void onLoadMoreChapter() {
+    print("onLoadMoreChapter comic id ${widget.idComic}");
+  }
+
+  void onFindComicByType(String idType) {
+    print("onFindComicByType comic id ${widget.idComic}");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -108,6 +112,7 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
                         },
                         follow: onFollowing,
                         like: onLiking,
+                        findComicByType: onFindComicByType,
                       ),
                     ),
                   ],

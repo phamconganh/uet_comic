@@ -17,6 +17,7 @@ class TypeList extends StatelessWidget {
         types.length,
         (index) => TypeItem(
           type: types[index],
+          findComicByType: findComicByType,
         ),
       ),
     );
@@ -36,7 +37,7 @@ class TypeItem extends StatelessWidget {
         type.name,
       ),
       onPressed: () {
-        findComicByType(type.id);
+        if(findComicByType != null) findComicByType(type.id);
       },
     );
   }

@@ -11,7 +11,7 @@ class ComicInfo extends StatelessWidget {
   final VoidCallback read;
   final VoidCallback follow;
   final VoidCallback like;
-  final StringCallback findComicByTag;
+  final StringCallback findComicByType;
 
   ComicInfo({
     Key key,
@@ -19,7 +19,7 @@ class ComicInfo extends StatelessWidget {
     this.read,
     this.follow,
     this.like,
-    this.findComicByTag,
+    this.findComicByType,
   }) : super(key: key);
 
   @override
@@ -118,6 +118,7 @@ class ComicInfo extends StatelessWidget {
           const SizedBox(height: 8),
           TypeList(
             types: comic.types,
+            findComicByType: findComicByType,
           ),
           ExpandablePanel(
             header: const Text(
