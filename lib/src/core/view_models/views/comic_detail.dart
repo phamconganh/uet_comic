@@ -38,6 +38,7 @@ class ComicDetailPageModel extends BaseModel {
 
   Future fetchComicDetail(String idComic) async {
     setBusyComicDetail(true);
+    await Future.delayed(Duration(seconds: 5));
     _comicDetail = Comic(
       id: "1",
       name: "Dị Thế Tà Quân",
@@ -79,7 +80,10 @@ class ComicDetailPageModel extends BaseModel {
   }
 
   Future fetchChapters(String idComic) async {
+
     setBusyChapters(true);
+    await Future.delayed(Duration(seconds: 2));
+
     _chapters = [
       Chapter(id: "1", idComic: "1", name: "1", lastUpdate: DateTime.now()),
       Chapter(id: "2", idComic: "1", name: "2", lastUpdate: DateTime.now()),
@@ -90,6 +94,8 @@ class ComicDetailPageModel extends BaseModel {
 
   Future fetchSameComics() async {
     setBusySameComics(true);
+    await Future.delayed(Duration(seconds: 7));
+
     for (var i = 0; i < 6; i++) {
       _sameComics.add(
         ComicCover(

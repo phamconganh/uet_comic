@@ -1,13 +1,16 @@
 // import 'package:bottom_navy_bar/bottom_navy_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 // import 'package:provider/provider.dart';
 // import 'package:uet_comic/src/core/services/api.dart';
 // import 'package:uet_comic/src/ui/views/account.dart';
 import 'package:uet_comic/src/ui/views/downloaded.dart';
+import 'package:uet_comic/src/ui/views/followed.dart';
 import 'package:uet_comic/src/ui/views/home.dart';
 import 'package:uet_comic/src/ui/views/search.dart';
 // import 'package:uet_comic/src/ui/views/settings.dart';
 import 'package:english_words/english_words.dart' as words;
+import 'package:uet_comic/src/ui/views/settings.dart';
 import 'package:uet_comic/src/ui/widgets/bottom_nav_bar.dart';
 import 'package:uet_comic/src/ui/widgets/search_app_bar.dart';
 
@@ -31,23 +34,31 @@ class _BasePageState extends State<BasePage> {
   final bodyList = <Widget>[
     HomePage(),
     SearchPage(),
+    FollowedPage(),
     DownloadedPage(),
   ];
 
   final items = <BottomNavyBarItem>[
     BottomNavyBarItem(
-      icon: Icon(Icons.apps),
+      icon: Icon(Icons.home),
       title: Text('Home'),
       activeColor: Colors.red,
     ),
     BottomNavyBarItem(
-        icon: Icon(Icons.search),
-        title: Text('Search'),
-        activeColor: Colors.purpleAccent),
+      icon: Icon(Icons.filter_list),
+      title: Text('Search'),
+      activeColor: Colors.purpleAccent,
+    ),
     BottomNavyBarItem(
-        icon: Icon(Icons.folder),
-        title: Text('Downloaded'),
-        activeColor: Colors.pink),
+      icon: Icon(FontAwesomeIcons.heart),
+      title: Text('Followed'),
+      activeColor: Colors.orange,
+    ),
+    BottomNavyBarItem(
+      icon: Icon(Icons.folder),
+      title: Text('Downloaded'),
+      activeColor: Colors.pink,
+    ),
   ];
 
   final List<String> kWords;
@@ -133,6 +144,14 @@ class _BasePageState extends State<BasePage> {
     }
   }
 
+  void showSettingPage() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (BuildContext context) => SettingsPage(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -157,9 +176,7 @@ class _BasePageState extends State<BasePage> {
               Icons.account_circle,
             ),
             //Don't block the main thread
-            onPressed: () {
-              // showSearchPage(context, _searchDelegate);
-            },
+            onPressed: showSettingPage,
           ),
         ],
       ),

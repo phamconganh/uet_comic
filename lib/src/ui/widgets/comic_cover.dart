@@ -18,15 +18,16 @@ class ComicCoverList extends StatelessWidget {
       desiredItemWidth: 100,
       minSpacing: 10,
       children: List.generate(
-          comicCovers.length,
-          (index) => InkWell(
-                onTap: () {
-                  choosedComic(comicCovers[index].id);
-                },
-                child: ComicCoverItem(
-                  comicCover: comicCovers[index],
-                ),
-              )),
+        comicCovers.length,
+        (index) => InkWell(
+          onTap: () {
+            choosedComic(comicCovers[index].id);
+          },
+          child: ComicCoverItem(
+            comicCover: comicCovers[index],
+          ),
+        ),
+      ),
     );
   }
 }
@@ -46,7 +47,8 @@ class ComicCoverItem extends StatelessWidget {
       children: <Widget>[
         Hero(
           tag: comicCover.id,
-          child: CardImage(
+          child:
+          CardImage(
             imageLink: comicCover.imageLink,
           ),
         ),

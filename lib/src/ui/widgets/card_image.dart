@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class CardImage extends StatelessWidget {
@@ -11,15 +10,15 @@ class CardImage extends StatelessWidget {
     return Card(
       semanticContainer: true,
       clipBehavior: Clip.antiAliasWithSaveLayer,
-      child: Image.network(
-        imageLink,
+      child: FadeInImage.assetNetwork(
+        image: imageLink,
+        placeholder: 'assets/loading.jpg',
         fit: BoxFit.fill,
       ),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10.0),
-      ),
+      // shape: RoundedRectangleBorder(
+      //   borderRadius: BorderRadius.circular(10.0),
+      // ),
       elevation: 5,
-      margin: EdgeInsets.all(10),
     );
   }
 }

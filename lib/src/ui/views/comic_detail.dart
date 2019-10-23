@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:uet_comic/src/core/models/chapter.dart';
@@ -34,7 +33,7 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
   }
 
   void onReading(List<Chapter> chapters) {
-    if(chapters.length == 0) return;
+    if (chapters.length == 0) return;
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (BuildContext context) => ChapterDetailPage(
@@ -62,60 +61,72 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    print(widget.idComic);
-    if (comicDetailPageModel == null) {
-      comicDetailPageModel = ComicDetailPageModel();
-      comicDetailPageModel.fetchComicDetail(widget.idComic);
-      comicDetailPageModel.fetchChapters(widget.idComic);
-      comicDetailPageModel.fetchSameComics();
-    }
+  void initState() {
+    comicDetailPageModel = ComicDetailPageModel();
+    onLoadData();
+    super.initState();
+  }
 
+  Future<void> onLoadData() async {
+    comicDetailPageModel.fetchComicDetail(widget.idComic);
+    comicDetailPageModel.fetchChapters(widget.idComic);
+    comicDetailPageModel.fetchSameComics();
+    return;
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Chi tiết truyện"),
       ),
-      body: ChangeNotifierProvider(
-        builder: (_) => comicDetailPageModel,
-        child: Consumer<ComicDetailPageModel>(builder: (__, model, child) {
-          return SingleChildScrollView(
-            child: Column(
+      body: SingleChildScrollView(
+        child: ChangeNotifierProvider(
+          builder: (_) => comicDetailPageModel,
+          child: Consumer<ComicDetailPageModel>(builder: (__, model, child) {
+            return Column(
               children: <Widget>[
                 const Divider(),
-                ResponsiveGridRow(
-                  children: [
-                    ResponsiveGridCol(
-                      sm: 12,
-                      xs: 12,
-                      md: 12,
-                      lg: 3,
-                      xl: 3,
-                      child: Center(
-                        child: Hero(
-                          tag: widget.idComic,
-                          child: CardImage(
-                            imageLink: model.comicDetail.imageLink,
-                          ),
+                Container(
+                  child: model.isFetchingComicDetail
+                      ? Center(
+                          child: CircularProgressIndicator(),
+                        )
+                      : ResponsiveGridRow(
+                          children: [
+                            ResponsiveGridCol(
+                              sm: 12,
+                              xs: 12,
+                              md: 12,
+                              lg: 3,
+                              xl: 3,
+                              child: Center(
+                                child: Hero(
+                                  tag: widget.idComic,
+                                  child: CardImage(
+                                    imageLink: model.comicDetail.imageLink,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            ResponsiveGridCol(
+                              sm: 12,
+                              xs: 12,
+                              md: 12,
+                              lg: 9,
+                              xl: 9,
+                              child: ComicInfo(
+                                comic: model.comicDetail,
+                                read: () {
+                                  onReading(model.chapters);
+                                },
+                                follow: onFollowing,
+                                like: onLiking,
+                                findComicByType: onFindComicByType,
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                    ),
-                    ResponsiveGridCol(
-                      sm: 12,
-                      xs: 12,
-                      md: 12,
-                      lg: 9,
-                      xl: 9,
-                      child: ComicInfo(
-                        comic: model.comicDetail,
-                        read: () {
-                          onReading(model.chapters);
-                        },
-                        follow: onFollowing,
-                        like: onLiking,
-                        findComicByType: onFindComicByType,
-                      ),
-                    ),
-                  ],
                 ),
                 const Divider(),
                 const ListTile(
@@ -129,8 +140,14 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                ChapterList(
-                  chapters: model.chapters,
+                Container(
+                  child: model.isFetchingChapters
+                      ? Center(
+                          child: CircularProgressIndicator(),
+                        )
+                      : ChapterList(
+                          chapters: model.chapters,
+                        ),
                 ),
                 RaisedButton(
                   onPressed: () {},
@@ -148,17 +165,23 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                ComicCoverList(
-                  comicCovers: model.sameComics,
-                  choosedComic: choosedComic,
+                Container(
+                  child: model.isFetchingSameComics
+                      ? Center(
+                          child: CircularProgressIndicator(),
+                        )
+                      : ComicCoverList(
+                          comicCovers: model.sameComics,
+                          choosedComic: choosedComic,
+                        ),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(10),
                 )
               ],
-            ),
-          );
-        }),
+            );
+          }),
+        ),
       ),
     );
   }
