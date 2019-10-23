@@ -1,5 +1,6 @@
 .settings
 .project
+.classpath
 ./app/.settings
 ./app/.project
 ./app/.classpath
