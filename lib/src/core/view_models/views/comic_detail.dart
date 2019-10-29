@@ -74,7 +74,7 @@ class ComicDetailPageModel extends BaseModel {
       age: 10,
       gender: 1,
       imageLink:
-          "http://i.mangaqq.com/ebook/190x247/musashi_1552552399.jpg?thang=t6544651",
+          "https://i.imgur.com/d9EEHCS.jpg",
     );
     setBusyComicDetail(false);
   }
@@ -104,7 +104,7 @@ class ComicDetailPageModel extends BaseModel {
           lastUpdate: DateTime.now(),
           lastChapter: "1",
           imageLink:
-              "http://i.mangaqq.com/ebook/190x247/musashi_1552552399.jpg?thang=t6544651",
+              "https://i.imgur.com/d9EEHCS.jpg",
           // "http://3.bp.blogspot.com/-LHURB4jzEx4/Xalm8fUkWUI/AAAAAAAAAk8/IcOExDRGY7c1um5Xi0ePNSZs6Lb0rmRCgCKgBGAsYHg/s0/02.jpg?imgmax=0",
         ),
       );

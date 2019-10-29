@@ -15,7 +15,7 @@ class DownloadedPageModel extends BaseModel {
           lastUpdate: DateTime.now(),
           lastChapter: "1",
           imageLink:
-              "http://i.mangaqq.com/ebook/190x247/musashi_1552552399.jpg?thang=t6544651",
+              "https://i.imgur.com/d9EEHCS.jpg",
         ),
       );
     }

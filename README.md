@@ -37,3 +37,11 @@ flutter run -t lib/main_dev.dart
 ```
 flutter run -t lib/main_prod.dart --release
 ```
+
+## Deployment
+- genkey debug
+```
+keytool -genkey -v -keystore ./keys/debug.keystore -keysize 2048 -validity 10000 -alias uetcomic
+```
+password = uetcomic123
+CN=Uet Comic, OU=UET, O=UET, L=Hanoi, ST=Hanoi, C=VN

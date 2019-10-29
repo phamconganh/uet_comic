@@ -1,5 +1,6 @@
 // import 'package:cloud_firestore/cloud_firestore.dart';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:uet_comic/src/core/models/author.dart';
 import 'package:uet_comic/src/core/models/chapter.dart';
 import 'package:uet_comic/src/core/models/type.dart' as uet_comic_type;
@@ -18,7 +19,7 @@ class Comic {
   final List<Chapter> chapters;
   final int age;
   final int gender;
-  // final Timestamp lastUpdate;
+  final DateTime lastUpdate;
 
   Comic({
     this.id,
@@ -34,7 +35,7 @@ class Comic {
     this.chapters,
     this.age,
     this.gender,
-    // this.lastUpdate,
+    this.lastUpdate,
   });
 
   factory Comic.fromMap(Map<String, dynamic> map, String id) => Comic(
@@ -51,7 +52,7 @@ class Comic {
     // chapters: (map['chapters'] as List)?.map((e) => e as String)?.toList(),
     age: map['age'] as int,
     gender: map['gender'] as int,
-    // lastUpdate: map['lastUpdate'] as Timestamp,
+    lastUpdate: DateTime.parse((map['lastUpdate'] as Timestamp).toDate().toString()),
   );
 
   Map<String, dynamic> toMap() => <String, dynamic>{

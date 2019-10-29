@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:uet_comic/src/core/models/comic_cover.dart';
 import 'package:uet_comic/src/core/view_models/base.dart';
 
@@ -12,8 +13,7 @@ class HomePageModel extends BaseModel {
           lastUpdate: DateTime.now(),
           lastChapter: "1",
           imageLink:
-              "http://i.mangaqq.com/ebook/190x247/musashi_1552552399.jpg?thang=t6544651",
-          // "http://3.bp.blogspot.com/-LHURB4jzEx4/Xalm8fUkWUI/AAAAAAAAAk8/IcOExDRGY7c1um5Xi0ePNSZs6Lb0rmRCgCKgBGAsYHg/s0/02.jpg?imgmax=0",
+              "https://i.imgur.com/d9EEHCS.jpg",
         ),
       );
     }
@@ -59,8 +59,10 @@ class HomePageModel extends BaseModel {
 
   Future fetchNewComicCovers() async {
     setBusyNewComicCovers(true);
-    print(1);
-    _newComicCovers = covers.sublist(0, 10);
+    var data = await Firestore.instance.collection('comic').getDocuments();
+    _newComicCovers = data.documents.map((doc) => ComicCover.fromMap(doc.data))
+        .toList();
+    // covers.sublist(0, 10);
     setBusyNewComicCovers(false);
   }
 

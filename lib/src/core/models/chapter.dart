@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Chapter {
   final String id;
   final String name;
@@ -17,7 +19,7 @@ class Chapter {
     id: id,
     name: map['name'] as String,
     idComic: map['idComic'] as String,
-    lastUpdate: map['lastUpdate'] as DateTime,
+    lastUpdate: DateTime.parse((map['lastUpdate'] as Timestamp).toDate().toString()),
     images: (map['images'] as List)?.map((e) => e as String)?.toList(),
   );
 
