@@ -1,10 +1,28 @@
 import 'package:provider/provider.dart';
 import 'package:uet_comic/src/core/models/config.dart';
+import 'package:uet_comic/src/core/services/author.dart';
+import 'package:uet_comic/src/core/services/chapter.dart';
+import 'package:uet_comic/src/core/services/comic.dart';
+import 'package:uet_comic/src/core/services/type.dart';
 // import 'package:uet_comic/src/core/services/api.dart';
 
 List<SingleChildCloneableWidget> getProviders(Config config) {
   List<SingleChildCloneableWidget> independentServices = [
-    Provider.value(value: config)
+    Provider.value(
+      value: config,
+    ),
+    Provider.value(
+      value: ComicService(),
+    ),
+    Provider.value(
+      value: ChapterService(),
+    ),
+    Provider.value(
+      value: AuthorService(),
+    ),
+    Provider.value(
+      value: TypeService(),
+    ),
   ];
 
   // List<SingleChildCloneableWidget> dependentServices = [

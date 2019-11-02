@@ -7,9 +7,11 @@ import 'package:uet_comic/src/ui/widgets/bottom_chapter_bar.dart';
 
 class ChapterDetailPage extends StatefulWidget {
   final List<Chapter> chapters;
-  final String idChapter;
+  final int indexChapter;
 
-  ChapterDetailPage({Key key, this.chapters, this.idChapter}) : super(key: key);
+  ChapterDetailPage(
+      {Key key, @required this.chapters, @required this.indexChapter})
+      : super(key: key);
 
   @override
   _ChapterDetailPageState createState() => _ChapterDetailPageState();
@@ -21,8 +23,16 @@ class _ChapterDetailPageState extends State<ChapterDetailPage> {
   @override
   void initState() {
     chapterDetailPageModel = ChapterDetailPageModel();
-    chapterDetailPageModel.fetchChapterDetail(widget.idChapter);
+    chapterDetailPageModel.setChapter(widget.chapters[widget.indexChapter]);
     super.initState();
+  }
+
+  void goHome() {
+    Navigator.popUntil(context, ModalRoute.withName('/'));
+  }
+
+  void nextChapter() {
+
   }
 
   @override
@@ -40,8 +50,9 @@ class _ChapterDetailPageState extends State<ChapterDetailPage> {
                 model.chapter.images.length,
                 (index) {
                   return Padding(
-                    child: Image.network(
-                      model.chapter.images[index],
+                    child: FadeInImage.assetNetwork(
+                      image: model.chapter.images[index],
+                      placeholder: 'assets/loading.jpg',
                       fit: BoxFit.fill,
                     ),
                     padding: const EdgeInsets.only(
@@ -57,6 +68,13 @@ class _ChapterDetailPageState extends State<ChapterDetailPage> {
       ),
       bottomNavigationBar: BottomChapterBar(
         chapters: widget.chapters,
+        goHome: goHome,
+        reportChapter: null,
+        previousChapter: null,
+        chooseIndexChapter: null,
+        nextChapter: null,
+        changeLight: null,
+        like: null,
       ),
     );
   }

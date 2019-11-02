@@ -1,23 +1,13 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/widgets.dart';
 import 'package:uet_comic/src/core/models/comic_cover.dart';
+import 'package:uet_comic/src/core/services/comic.dart';
 import 'package:uet_comic/src/core/view_models/base.dart';
 
 class HomePageModel extends BaseModel {
   List<ComicCover> covers = [];
-  HomePageModel() {
-    for (var i = 0; i < 30; i++) {
-      covers.add(
-        ComicCover(
-          id: i.toString(),
-          name: "Test asdasd asdasdasd adasdasd asdasdad adasdasda",
-          lastUpdate: DateTime.now(),
-          lastChapter: "1",
-          imageLink:
-              "https://i.imgur.com/d9EEHCS.jpg",
-        ),
-      );
-    }
-  }
+  ComicService comicService;
+
+  HomePageModel({@required this.comicService}): assert(comicService != null);
 
   bool _isFetchingNewComicCovers = false;
   bool get isFetchingNewComicCovers => _isFetchingNewComicCovers;
@@ -59,22 +49,19 @@ class HomePageModel extends BaseModel {
 
   Future fetchNewComicCovers() async {
     setBusyNewComicCovers(true);
-    var data = await Firestore.instance.collection('comic').getDocuments();
-    _newComicCovers = data.documents.map((doc) => ComicCover.fromMap(doc.data))
-        .toList();
-    // covers.sublist(0, 10);
+    _newComicCovers = await comicService.fetchNewComicCovers();
     setBusyNewComicCovers(false);
   }
 
   Future fetchMaleComicCovers() async {
     setBusyMaleComicCovers(true);
-    _maleComicCovers = covers.sublist(10, 20);
+    _maleComicCovers = await comicService.fetchMaleComicCovers();
     setBusyMaleComicCovers(false);
   }
 
   Future fetchFemaleComicCovers() async {
     setBusyFemaleComicCovers(true);
-    _femaleComicCovers = covers.sublist(20, 30);
+    _femaleComicCovers = await comicService.fetchFemaleComicCovers();
     setBusyFemaleComicCovers(false);
   }
 }

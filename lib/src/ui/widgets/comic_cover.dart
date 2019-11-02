@@ -70,48 +70,48 @@ class ComicCoverItem extends StatelessWidget {
   }
 }
 
-class TopNoTiceWidget extends StatelessWidget {
-  final String text;
-  final Color color;
-  final double maxWidth;
-  final bool isFlash;
+// class TopNoTiceWidget extends StatelessWidget {
+//   final String text;
+//   final Color color;
+//   final double maxWidth;
+//   final bool isFlash;
 
-  TopNoTiceWidget(
-      {Key key, @required this.text, this.color, this.maxWidth, this.isFlash})
-      : super(key: key);
+//   TopNoTiceWidget(
+//       {Key key, @required this.text, this.color, this.maxWidth, this.isFlash})
+//       : super(key: key);
 
-  @override
-  Widget build(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
-    // final Size size = MediaQuery.of(context).size;
+//   @override
+//   Widget build(BuildContext context) {
+//     final ThemeData theme = Theme.of(context);
+//     // final Size size = MediaQuery.of(context).size;
 
-    final container = Container(
-      alignment: Alignment.center,
-      height: 25,
-      constraints: BoxConstraints(
-        minWidth: 10,
-        maxWidth: (maxWidth != null && maxWidth > 50 && maxWidth < 100)
-            ? maxWidth
-            : 100,
-      ),
-      padding: EdgeInsets.only(left: 5, right: 5),
-      margin: EdgeInsets.all(5),
-      decoration: BoxDecoration(
-        color: color ?? theme.buttonColor,
-        borderRadius: BorderRadius.all(Radius.circular(5.0)),
-      ),
-      child: Text(
-        text,
-        textAlign: TextAlign.start,
-        overflow: TextOverflow.ellipsis,
-      ),
-    );
-    return this.isFlash != null && this.isFlash
-        ? AnimatedContainer(
-            // transform: ,
-            duration: Duration(milliseconds: 1),
-            child: container,
-          )
-        : container;
-  }
-}
+//     final container = Container(
+//       alignment: Alignment.center,
+//       height: 25,
+//       constraints: BoxConstraints(
+//         minWidth: 10,
+//         maxWidth: (maxWidth != null && maxWidth > 50 && maxWidth < 100)
+//             ? maxWidth
+//             : 100,
+//       ),
+//       padding: EdgeInsets.only(left: 5, right: 5),
+//       margin: EdgeInsets.all(5),
+//       decoration: BoxDecoration(
+//         color: color ?? theme.buttonColor,
+//         borderRadius: BorderRadius.all(Radius.circular(5.0)),
+//       ),
+//       child: Text(
+//         text,
+//         textAlign: TextAlign.start,
+//         overflow: TextOverflow.ellipsis,
+//       ),
+//     );
+//     return this.isFlash != null && this.isFlash
+//         ? AnimatedContainer(
+//             // transform: ,
+//             duration: Duration(milliseconds: 1),
+//             child: container,
+//           )
+//         : container;
+//   }
+// }

@@ -21,7 +21,7 @@ class ComicDetailPage extends StatefulWidget {
 class _ComicDetailPageState extends State<ComicDetailPage> {
   ComicDetailPageModel comicDetailPageModel;
 
-  void choosedComic(String idComic) {
+  void choosedComic(String data) {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (BuildContext context) => ComicDetailPage(
@@ -32,16 +32,27 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
     );
   }
 
-  void onReading(List<Chapter> chapters) {
+  void onReadIndexChapter(List<Chapter> chapters, int index) {
     if (chapters.length == 0) return;
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (BuildContext context) => ChapterDetailPage(
-          idChapter: chapters[0].id,
-          chapters: chapters,
+    if (index != null) {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (BuildContext context) => ChapterDetailPage(
+            indexChapter: index,
+            chapters: chapters,
+          ),
         ),
-      ),
-    );
+      );
+    } else {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (BuildContext context) => ChapterDetailPage(
+            indexChapter: 0,
+            chapters: chapters,
+          ),
+        ),
+      );
+    }
   }
 
   void onFollowing() {
@@ -60,13 +71,6 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
     print("onFindComicByType comic id ${widget.idComic}");
   }
 
-  @override
-  void initState() {
-    comicDetailPageModel = ComicDetailPageModel();
-    onLoadData();
-    super.initState();
-  }
-
   Future<void> onLoadData() async {
     comicDetailPageModel.fetchComicDetail(widget.idComic);
     comicDetailPageModel.fetchChapters(widget.idComic);
@@ -76,6 +80,15 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (comicDetailPageModel == null) {
+      comicDetailPageModel = ComicDetailPageModel(
+        comicService: Provider.of(context),
+        chapterService: Provider.of(context),
+        authorService: Provider.of(context),
+        typeService: Provider.of(context),
+      );
+      onLoadData();
+    }
     return Scaffold(
       appBar: AppBar(
         title: Text("Chi tiết truyện"),
@@ -118,7 +131,7 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
                               child: ComicInfo(
                                 comic: model.comicDetail,
                                 read: () {
-                                  onReading(model.chapters);
+                                  onReadIndexChapter(model.chapters, null);
                                 },
                                 follow: onFollowing,
                                 like: onLiking,
@@ -147,6 +160,9 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
                         )
                       : ChapterList(
                           chapters: model.chapters,
+                          onReadIndexChapter: (index) {
+                            onReadIndexChapter(model.chapters, index);
+                          },
                         ),
                 ),
                 RaisedButton(

@@ -39,7 +39,7 @@ class ComicInfo extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            "Tác giả: ${comic.author.name}",
+            "Tác giả: ${comic?.author?.name}",
             overflow: TextOverflow.ellipsis,
           ),
           const SizedBox(height: 8),

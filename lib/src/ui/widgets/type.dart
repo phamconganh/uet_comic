@@ -7,7 +7,7 @@ class TypeList extends StatelessWidget {
   final List<uet_comic_type.Type> types;
   final StringCallback findComicByType;
 
-  TypeList({Key key, this.types, this.findComicByType}) : super(key: key);
+  TypeList({Key key, @required this.types, this.findComicByType}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -15,30 +15,15 @@ class TypeList extends StatelessWidget {
       spacing: 3.0,
       children: List.generate(
         types.length,
-        (index) => TypeItem(
-          type: types[index],
-          findComicByType: findComicByType,
+        (index) => RaisedButton(
+          child: Text(
+            types[index].name,
+          ),
+          onPressed: () {
+            if (findComicByType != null) findComicByType(types[index].id);
+          },
         ),
       ),
-    );
-  }
-}
-
-class TypeItem extends StatelessWidget {
-  final uet_comic_type.Type type;
-  final StringCallback findComicByType;
-
-  TypeItem({Key key, this.type, this.findComicByType}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return RaisedButton(
-      child: Text(
-        type.name,
-      ),
-      onPressed: () {
-        if(findComicByType != null) findComicByType(type.id);
-      },
     );
   }
 }

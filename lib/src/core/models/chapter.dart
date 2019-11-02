@@ -15,11 +15,11 @@ class Chapter {
     this.images
   });
 
-  factory Chapter.fromMap(Map<String, dynamic> map, String id) => Chapter(
-    id: id,
-    name: map['name'] as String,
-    idComic: map['idComic'] as String,
-    lastUpdate: DateTime.parse((map['lastUpdate'] as Timestamp).toDate().toString()),
+  factory Chapter.fromMap(Map<String, dynamic> map) => Chapter(
+    id: map['id']?.toString(),
+    name: map['name']?.toString(),
+    idComic: map['idComic']?.toString(),
+    // lastUpdate: DateTime.parse((map['lastUpdate'] as Timestamp).toDate().toString()),
     images: (map['images'] as List)?.map((e) => e as String)?.toList(),
   );
 

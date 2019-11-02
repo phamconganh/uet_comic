@@ -7,8 +7,8 @@ class Type {
     this.name,
   });
 
-  factory Type.fromMap(Map<String, dynamic> map, String id) => Type(
-    id: id,
+  factory Type.fromMap(Map<String, dynamic> map) => Type(
+    id: map['id']?.toString(),
     name: map['name'] as String,
   );
 

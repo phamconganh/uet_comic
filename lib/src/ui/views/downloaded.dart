@@ -9,7 +9,10 @@ class DownloadedPage extends StatefulWidget {
   _DownloadedPageState createState() => _DownloadedPageState();
 }
 
-class _DownloadedPageState extends State<DownloadedPage> {
+class _DownloadedPageState extends State<DownloadedPage>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
   DownloadedPageModel downloadedPageModel;
 
   void choosedComic(String idComic) {
@@ -31,6 +34,7 @@ class _DownloadedPageState extends State<DownloadedPage> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return ChangeNotifierProvider(
       builder: (_) => downloadedPageModel,
       child: Consumer<DownloadedPageModel>(

@@ -6,14 +6,18 @@ import 'package:uet_comic/src/ui/views/comic_detail.dart';
 import 'package:uet_comic/src/ui/widgets/comic_cover.dart';
 
 class HomePage extends StatefulWidget {
+  HomePage({Key key}) : super(key: key);
+
   @override
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
   HomePageModel homePageModel;
 
-  // RefreshController _refreshController = RefreshController(initialRefresh: false);
   void choosedComic(String idComic) {
     Navigator.of(context).push(
       MaterialPageRoute(
@@ -32,14 +36,12 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
-  void initState() {
-    homePageModel = HomePageModel();
-    onLoadData();
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    super.build(context);
+    if(homePageModel == null) {
+      homePageModel = HomePageModel(comicService: Provider.of(context));
+      onLoadData();
+    }
     return RefreshIndicator(
       onRefresh: onLoadData,
       child: ChangeNotifierProvider(

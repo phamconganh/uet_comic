@@ -10,7 +10,10 @@ class FollowedPage extends StatefulWidget {
   _FollowedPageState createState() => _FollowedPageState();
 }
 
-class _FollowedPageState extends State<FollowedPage> {
+class _FollowedPageState extends State<FollowedPage>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
   FollowedPageModel followedPageModel;
 
   void choosedComic(String idComic) {
@@ -32,6 +35,7 @@ class _FollowedPageState extends State<FollowedPage> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return ChangeNotifierProvider(
       builder: (_) => followedPageModel,
       child: Consumer<FollowedPageModel>(

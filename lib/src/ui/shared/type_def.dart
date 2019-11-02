@@ -1,1 +1,2 @@
-typedef StringCallback(String idComic);
+typedef StringCallback(String data);
+typedef IntCallback(int number);

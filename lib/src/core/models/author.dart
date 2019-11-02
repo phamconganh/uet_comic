@@ -7,8 +7,8 @@ class Author {
     this.name,
   });
 
-  factory Author.fromMap(Map<String, dynamic> map, String id) => Author(
-    id: id,
+  factory Author.fromMap(Map<String, dynamic> map) => Author(
+    id: map['id']?.toString(),
     name: map['name'] as String,
   );
 

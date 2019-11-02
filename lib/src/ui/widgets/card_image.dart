@@ -1,9 +1,10 @@
+// import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class CardImage extends StatelessWidget {
   final String imageLink;
 
-  CardImage({Key key, this.imageLink}) : super(key: key);
+  CardImage({Key key, @required this.imageLink}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -15,8 +16,10 @@ class CardImage extends StatelessWidget {
         placeholder: 'assets/loading.jpg',
         fit: BoxFit.fill,
       ),
-      // shape: RoundedRectangleBorder(
-      //   borderRadius: BorderRadius.circular(10.0),
+      // child: CachedNetworkImage(
+      //   imageUrl: imageLink,
+      //   placeholder: (context, url) => CircularProgressIndicator(),
+      //   errorWidget: (context, url, error) => Icon(Icons.error),
       // ),
       elevation: 5,
     );

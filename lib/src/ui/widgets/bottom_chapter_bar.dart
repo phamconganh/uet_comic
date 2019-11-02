@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:uet_comic/src/core/models/chapter.dart';
+import 'package:uet_comic/src/ui/shared/type_def.dart';
 
 class BottomChapterBar extends StatefulWidget {
   final List<Chapter> chapters;
@@ -9,6 +10,10 @@ class BottomChapterBar extends StatefulWidget {
   final VoidCallback reportChapter;
   final VoidCallback changeLight;
   final VoidCallback like;
+  final VoidCallback nextChapter;
+  final VoidCallback previousChapter;
+  final IntCallback chooseIndexChapter;
+  final int currentIndex;
 
   BottomChapterBar({
     Key key,
@@ -17,6 +22,10 @@ class BottomChapterBar extends StatefulWidget {
     this.reportChapter,
     this.changeLight,
     this.like,
+    this.nextChapter,
+    this.previousChapter,
+    this.chooseIndexChapter,
+    this.currentIndex,
   }) : super(key: key);
 
   @override
@@ -27,6 +36,7 @@ class _BottomChapterBarState extends State<BottomChapterBar> {
   int _value = 0;
   @override
   Widget build(BuildContext context) {
+    _value = widget.currentIndex;
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.only(
@@ -46,15 +56,18 @@ class _BottomChapterBarState extends State<BottomChapterBar> {
             children: [
               IconButton(
                 icon: Icon(Icons.home),
-                onPressed: widget.goHome,
+                onPressed: widget.goHome != null ? widget.goHome : () {},
               ),
               IconButton(
                 icon: Icon(Icons.warning),
-                onPressed: widget.reportChapter,
+                onPressed:
+                    widget.reportChapter != null ? widget.reportChapter : () {},
               ),
               IconButton(
                 icon: Icon(Icons.navigate_before),
-                onPressed: () {},
+                onPressed: widget.previousChapter != null
+                    ? widget.previousChapter
+                    : () {},
               ),
               DropdownButton<int>(
                 value: _value,
@@ -67,22 +80,29 @@ class _BottomChapterBarState extends State<BottomChapterBar> {
                   );
                 }),
                 onChanged: (int value) {
-                  setState(() {
-                    _value = value;
-                  });
+                  if (value != _value) {
+                    setState(() {
+                      _value = value;
+                    });
+                    if(widget.chooseIndexChapter != null) {
+                      widget.chooseIndexChapter(value);
+                    }
+                  }
                 },
               ),
               IconButton(
                 icon: Icon(Icons.navigate_next),
-                onPressed: () {},
+                onPressed:
+                    widget.nextChapter != null ? widget.nextChapter : () {},
               ),
               IconButton(
                 icon: Icon(FontAwesomeIcons.lightbulb),
-                onPressed: widget.changeLight,
+                onPressed:
+                    widget.changeLight != null ? widget.changeLight : () {},
               ),
               IconButton(
                 icon: Icon(FontAwesomeIcons.heart),
-                onPressed: widget.like,
+                onPressed: widget.like != null ? widget.like : () {},
               ),
             ],
           ),

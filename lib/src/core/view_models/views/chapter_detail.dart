@@ -4,6 +4,7 @@ import 'package:uet_comic/src/core/view_models/base.dart';
 class ChapterDetailPageModel extends BaseModel {
   Chapter _chapter;
   Chapter get chapter => _chapter;
+  void setChapter(Chapter chapter) => _chapter = chapter;
 
   Future fetchChapterDetail(String idChapter) async {
     setBusy(true);
