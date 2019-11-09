@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
 
 class SearchAppBarDelegate extends SearchDelegate<String> {
-  final List<String> _words;
-  final List<String> _history;
+  final List<String> words;
+  final List<String> history;
 
-  SearchAppBarDelegate(List<String> words)
-      : _words = words,
-        //pre-populated history of words
-        _history = <String>['apple', 'orange', 'banana', 'watermelon'],
-        super();
+  SearchAppBarDelegate({this.words, this.history});
 
   // Setting leading icon for the search bar.
   // Clicking on back arrow will take control to main page
@@ -61,15 +57,15 @@ class SearchAppBarDelegate extends SearchDelegate<String> {
   @override
   Widget buildSuggestions(BuildContext context) {
     final Iterable<String> suggestions = query.isEmpty
-        ? _history
-        : _words.where((word) => word.startsWith(query));
+        ? history
+        : words.where((word) => word.startsWith(query));
 
     return _WordsSuggestionWidget(
       query: query,
       suggestions: suggestions.toList(),
       onSelected: (String suggestion) {
         query = suggestion;
-        _history.insert(0, suggestion);
+        history.insert(0, suggestion);
         showResults(context);
       },
     );
@@ -97,10 +93,9 @@ class SearchAppBarDelegate extends SearchDelegate<String> {
             ),
     ];
   }
-  
+
 }
 
-// Suggestions list widget displayed in the search page.
 class _WordsSuggestionWidget extends StatelessWidget {
   _WordsSuggestionWidget({this.suggestions, this.query, this.onSelected});
 

@@ -1,14 +1,9 @@
-// import 'package:bottom_navy_bar/bottom_navy_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-// import 'package:provider/provider.dart';
-// import 'package:uet_comic/src/core/services/api.dart';
-// import 'package:uet_comic/src/ui/views/account.dart';
 import 'package:uet_comic/src/ui/views/downloaded.dart';
 import 'package:uet_comic/src/ui/views/followed.dart';
 import 'package:uet_comic/src/ui/views/home.dart';
 import 'package:uet_comic/src/ui/views/search.dart';
-// import 'package:uet_comic/src/ui/views/settings.dart';
 import 'package:english_words/english_words.dart' as words;
 import 'package:uet_comic/src/ui/views/settings.dart';
 import 'package:uet_comic/src/ui/widgets/bottom_nav_bar.dart';
@@ -24,11 +19,6 @@ class BasePage extends StatefulWidget {
 
 class _BasePageState extends State<BasePage> {
   int _selectedIndex = 0;
-
-  // bool _showAppbar = true; //this is to show app bar
-  // ScrollController _scrollBottomBarController = ScrollController(); // set controller on scrolling
-  // bool isScrollingDown = false;
-  // bool _show = true;
 
   final pageController = PageController();
   final bodyList = <Widget>[
@@ -75,50 +65,8 @@ class _BasePageState extends State<BasePage> {
   @override
   void initState() {
     super.initState();
-    // scrollToHide();
-    //Initializing search delegate with sorted list of English words
-    _searchDelegate = SearchAppBarDelegate(kWords);
+    _searchDelegate = SearchAppBarDelegate(words: kWords, history: ['apple', 'orange', 'banana', 'watermelon'],);
   }
-
-  // @override
-  // void dispose() {
-  //   _scrollBottomBarController.removeListener(() {});
-  //   super.dispose();
-  // }
-
-  // final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>(); // ADD THIS LINE
-
-  // void scrollToHide() async {
-  //   _scrollBottomBarController.addListener(() {
-  //     if (_scrollBottomBarController.position.userScrollDirection == ScrollDirection.reverse && !isScrollingDown) {
-  //       isScrollingDown = true;
-  //       _showAppbar = false;
-  //       hideBottomBar();
-  //     }
-  //     if (_scrollBottomBarController.position.userScrollDirection == ScrollDirection.forward && isScrollingDown) {
-  //       isScrollingDown = false;
-  //       _showAppbar = true;
-  //       showBottomBar();
-  //     }
-  //   });
-  // }
-
-  // void showBottomBar() {
-  //   setState(() {
-  //     _show = true;
-  //   });
-  // }
-
-  // void hideBottomBar() {
-  //   setState(() {
-  //     _show = false;
-  //   });
-  // }
-
-  // void _onTap(int index) {
-  //   pageController.jumpToPage(index);
-  //   // _scaffoldKey.currentState.openDrawer();
-  // }
 
   void onPageChanged(int index) {
     setState(() {
@@ -136,11 +84,11 @@ class _BasePageState extends State<BasePage> {
 
     if (selected != null) {
       print(selected);
-      Scaffold.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Your Word Choice: $selected'),
-        ),
-      );
+      // Scaffold.of(context).showSnackBar(
+      //   SnackBar(
+      //     content: Text('Your Word Choice: $selected'),
+      //   ),
+      // );
     }
   }
 
@@ -159,13 +107,11 @@ class _BasePageState extends State<BasePage> {
         automaticallyImplyLeading: false,
         title: Text(widget.title),
         actions: <Widget>[
-          //Adding the search widget in AppBar
           IconButton(
             tooltip: 'Search',
             icon: Icon(
               Icons.search,
             ),
-            //Don't block the main thread
             onPressed: () {
               showSearchPage(context, _searchDelegate);
             },
@@ -175,7 +121,6 @@ class _BasePageState extends State<BasePage> {
             icon: Icon(
               Icons.account_circle,
             ),
-            //Don't block the main thread
             onPressed: showSettingPage,
           ),
         ],

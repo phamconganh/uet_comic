@@ -38,13 +38,13 @@ class _BottomChapterBarState extends State<BottomChapterBar> {
   Widget build(BuildContext context) {
     _value = widget.currentIndex;
     return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.only(
-          topLeft: const Radius.circular(40.0),
-          topRight: const Radius.circular(40.0),
-        ),
-        color: Theme.of(context).bottomAppBarColor,
-      ),
+      // decoration: BoxDecoration(
+      //   borderRadius: BorderRadius.only(
+      //     topLeft: const Radius.circular(40.0),
+      //     topRight: const Radius.circular(40.0),
+      //   ),
+      //   color: Theme.of(context).bottomAppBarColor,
+      // ),
       child: ConstrainedBox(
         constraints: new BoxConstraints(
           minHeight: 45,

@@ -40,6 +40,7 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
           builder: (BuildContext context) => ChapterDetailPage(
             indexChapter: index,
             chapters: chapters,
+            comic: comicDetailPageModel.comicDetail,
           ),
         ),
       );
@@ -49,6 +50,7 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
           builder: (BuildContext context) => ChapterDetailPage(
             indexChapter: 0,
             chapters: chapters,
+            comic: comicDetailPageModel.comicDetail,
           ),
         ),
       );
@@ -69,6 +71,38 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
 
   void onFindComicByType(String idType) {
     print("onFindComicByType comic id ${widget.idComic}");
+  }
+
+  Future<void> downloadAllChapter() {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Tải tất cả chương trong truyện'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Bạn muốn tải tất cả các chương trong truyện?'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Hủy'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            FlatButton(
+              child: Text('Tải'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Future<void> onLoadData() async {
@@ -142,15 +176,24 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
                         ),
                 ),
                 const Divider(),
-                const ListTile(
+                ListTile(
                   leading: const Icon(
                     Icons.list,
                     color: Colors.orange,
                   ),
-                  title: const Text(
-                    "Danh sách chương",
-                    style: TextStyle(color: Colors.orange),
-                    overflow: TextOverflow.ellipsis,
+                  title: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      const Text(
+                        "Danh sách chương",
+                        style: TextStyle(color: Colors.orange),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.cloud_download),
+                        onPressed: downloadAllChapter,
+                      )
+                    ],
                   ),
                 ),
                 Container(
@@ -165,10 +208,10 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
                           },
                         ),
                 ),
-                RaisedButton(
-                  onPressed: () {},
-                  child: Text('Load more'),
-                ),
+                // RaisedButton(
+                //   onPressed: () {},
+                //   child: Text('Load more'),
+                // ),
                 const Divider(),
                 const ListTile(
                   leading: const Icon(

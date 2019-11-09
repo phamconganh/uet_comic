@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:uet_comic/src/ui/widgets/filter.dart';
 
 class SearchPage extends StatefulWidget {
   @override

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:uet_comic/src/core/models/author.dart';
 import 'package:uet_comic/src/core/models/chapter.dart';
 import 'package:uet_comic/src/core/models/comic.dart';
 import 'package:uet_comic/src/core/models/comic_cover.dart';
@@ -7,10 +6,9 @@ import 'package:uet_comic/src/core/services/author.dart';
 import 'package:uet_comic/src/core/services/chapter.dart';
 import 'package:uet_comic/src/core/services/comic.dart';
 import 'package:uet_comic/src/core/services/type.dart';
-import 'package:uet_comic/src/core/view_models/base.dart';
 import 'package:uet_comic/src/core/models/type.dart' as comic_type;
 
-class ComicDetailPageModel extends BaseModel {
+class ComicDetailPageModel extends ChangeNotifier {
   ComicService comicService;
   ChapterService chapterService;
   TypeService typeService;

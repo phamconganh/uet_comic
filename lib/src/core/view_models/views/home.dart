@@ -1,9 +1,8 @@
 import 'package:flutter/widgets.dart';
 import 'package:uet_comic/src/core/models/comic_cover.dart';
 import 'package:uet_comic/src/core/services/comic.dart';
-import 'package:uet_comic/src/core/view_models/base.dart';
 
-class HomePageModel extends BaseModel {
+class HomePageModel extends ChangeNotifier {
   List<ComicCover> covers = [];
   ComicService comicService;
 
@@ -39,17 +38,13 @@ class HomePageModel extends BaseModel {
   List<ComicCover> _femaleComicCovers = [];
   List<ComicCover> get femaleComicCovers => _femaleComicCovers;
 
-  Future fetchDatas({bool isSetBusy = true}) async {
-    if (isSetBusy) setBusy(true);
-    _newComicCovers = covers.sublist(0, 10);
-    _maleComicCovers = covers.sublist(10, 20);
-    _femaleComicCovers = covers.sublist(20, 30);
-    if (isSetBusy) setBusy(false);
-  }
-
   Future fetchNewComicCovers() async {
     setBusyNewComicCovers(true);
-    _newComicCovers = await comicService.fetchNewComicCovers();
+    try {
+      _newComicCovers = await comicService.fetchNewComicCovers();
+    } catch (e) {
+      print(e.runtimeType);
+    }
     setBusyNewComicCovers(false);
   }
 

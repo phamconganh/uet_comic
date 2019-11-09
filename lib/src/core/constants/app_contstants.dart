@@ -4,6 +4,7 @@
 // duplicate variable names.
 class RoutePaths {
   static const String Login = 'login';
-  static const String Home = '/';
-  static const String Post = 'post';
+  static const String Base = '/';
+  static const String Chapter = 'chapter';
+  static const String Comic = 'comic';
 }

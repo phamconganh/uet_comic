@@ -1,8 +1,7 @@
-// import 'package:meta/meta.dart';
-// import 'package:uet_comic/src/core/services/comic.dart';
-import 'package:uet_comic/src/core/view_models/base.dart';
 
-class SearcnhAppBarModel extends BaseModel {
+import 'package:flutter/foundation.dart';
+
+class SearcnhAppBarModel extends ChangeNotifier {
   List<String> words;
   List<String> history;
   // ComicService _comicService;

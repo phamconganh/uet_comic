@@ -1,16 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_mailer/flutter_mailer.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:uet_comic/src/core/models/chapter.dart';
+import 'package:uet_comic/src/core/models/comic.dart';
 import 'package:uet_comic/src/core/view_models/views/chapter_detail.dart';
-import 'package:uet_comic/src/ui/widgets/bottom_chapter_bar.dart';
 
 class ChapterDetailPage extends StatefulWidget {
   final List<Chapter> chapters;
   final int indexChapter;
+  final Comic comic;
 
   ChapterDetailPage(
-      {Key key, @required this.chapters, @required this.indexChapter})
+      {Key key,
+      @required this.chapters,
+      @required this.indexChapter,
+      this.comic})
       : super(key: key);
 
   @override
@@ -23,7 +29,8 @@ class _ChapterDetailPageState extends State<ChapterDetailPage> {
   @override
   void initState() {
     chapterDetailPageModel = ChapterDetailPageModel();
-    chapterDetailPageModel.setChapter(widget.chapters[widget.indexChapter]);
+    chapterDetailPageModel.setChaptersWithIndex(
+        widget.indexChapter, widget.chapters);
     super.initState();
   }
 
@@ -31,21 +38,46 @@ class _ChapterDetailPageState extends State<ChapterDetailPage> {
     Navigator.popUntil(context, ModalRoute.withName('/'));
   }
 
-  void nextChapter() {
+  void reportChapter() async {
+    final MailOptions mailOptions = MailOptions(
+      body: 'Lý do lỗi:',
+      subject:
+          'Lỗi chương ${chapterDetailPageModel.chapter.name} trong truyện ${widget.comic != null ? widget.comic.name : ''}',
+      recipients: ['uetcomic@gmail.com'],
+      // cc: ['cc@example.com'],
+      // bcc: ['bcc@example.com'],
+      isHTML: true,
+    );
+    await FlutterMailer.send(mailOptions);
+  }
 
+  void changeLight() {
+    print("Change light");
+  }
+
+  void like() {
+    print("like");
+  }
+
+  void nextChapter() {
+    chapterDetailPageModel.setIndex(chapterDetailPageModel.index + 1);
+  }
+
+  void previousChapter() {
+    chapterDetailPageModel.setIndex(chapterDetailPageModel.index - 1);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Đọc truyện"),
-      ),
-      body: ChangeNotifierProvider(
-        builder: (_) => chapterDetailPageModel,
-        child: Consumer<ChapterDetailPageModel>(
-          builder: (__, model, ___) {
-            return ListView(
+    return ChangeNotifierProvider(
+      builder: (_) => chapterDetailPageModel,
+      child: Consumer<ChapterDetailPageModel>(
+        builder: (__, model, ___) {
+          return Scaffold(
+            appBar: AppBar(
+              title: Text("Đọc truyện"),
+            ),
+            body: ListView(
               children: List.generate(
                 model.chapter.images.length,
                 (index) {
@@ -62,19 +94,71 @@ class _ChapterDetailPageState extends State<ChapterDetailPage> {
                   );
                 },
               ),
-            );
-          },
-        ),
+            ),
+            bottomNavigationBar: _buildChapterBar(),
+          );
+        },
       ),
-      bottomNavigationBar: BottomChapterBar(
-        chapters: widget.chapters,
-        goHome: goHome,
-        reportChapter: null,
-        previousChapter: null,
-        chooseIndexChapter: null,
-        nextChapter: null,
-        changeLight: null,
-        like: null,
+    );
+  }
+
+  Widget _buildChapterBar() {
+    return Container(
+      child: ConstrainedBox(
+        constraints: new BoxConstraints(
+          minHeight: 45,
+          maxHeight: 50,
+        ),
+        child: FittedBox(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              IconButton(
+                icon: Icon(Icons.home),
+                onPressed: goHome,
+              ),
+              IconButton(
+                icon: Icon(Icons.warning),
+                onPressed: reportChapter,
+              ),
+              IconButton(
+                icon: Icon(Icons.navigate_before),
+                onPressed:
+                    chapterDetailPageModel.isStart ? null : previousChapter,
+              ),
+              DropdownButton<int>(
+                value: chapterDetailPageModel.index,
+                items: List.generate(chapterDetailPageModel.chapters.length,
+                    (index) {
+                  return DropdownMenuItem(
+                    child: Center(
+                      child:
+                          Text('Chương ${chapterDetailPageModel.chapters[index].name}'),
+                    ),
+                    value: index,
+                  );
+                }),
+                onChanged: (int value) {
+                  if (value != chapterDetailPageModel.index) {
+                    chapterDetailPageModel.setIndex(value);
+                  }
+                },
+              ),
+              IconButton(
+                icon: Icon(Icons.navigate_next),
+                onPressed: chapterDetailPageModel.isEnd ? null : nextChapter,
+              ),
+              IconButton(
+                icon: Icon(FontAwesomeIcons.lightbulb),
+                onPressed: changeLight,
+              ),
+              IconButton(
+                icon: Icon(FontAwesomeIcons.heart),
+                onPressed: like,
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
