@@ -3,6 +3,7 @@ import 'package:uet_comic/src/core/models/config.dart';
 import 'package:uet_comic/src/core/services/author.dart';
 import 'package:uet_comic/src/core/services/chapter.dart';
 import 'package:uet_comic/src/core/services/comic.dart';
+import 'package:uet_comic/src/core/services/connectivity.dart';
 import 'package:uet_comic/src/core/services/type.dart';
 // import 'package:uet_comic/src/core/services/api.dart';
 
@@ -23,6 +24,9 @@ List<SingleChildCloneableWidget> getProviders(Config config) {
     Provider.value(
       value: TypeService(),
     ),
+    StreamProvider.value(
+      value: ConnectivityService().networkStatusController.stream,
+    )
   ];
 
   // List<SingleChildCloneableWidget> dependentServices = [

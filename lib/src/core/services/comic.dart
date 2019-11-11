@@ -4,11 +4,11 @@ import 'package:uet_comic/src/core/models/comic.dart';
 import 'package:uet_comic/src/core/models/comic_cover.dart';
 
 class ComicService {
-  // static final ComicService _instance = ComicService.internal();
-  // ComicService.internal();
-  // factory ComicService() => _instance;
-  // final CollectionReference ref = Firestore.instance.collection('comic');
-  CollectionReference ref = Firestore.instance.collection('comic');
+  static final ComicService instance = ComicService.internal();
+  ComicService.internal();
+  factory ComicService() => instance;
+
+  final CollectionReference ref = Firestore.instance.collection('comic');
 
   Future<List<ComicCover>> fetchNewComicCovers() async {
     QuerySnapshot data = await ref.orderBy("lastUpdate", descending: true).limit(10).getDocuments();
