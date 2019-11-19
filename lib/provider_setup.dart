@@ -3,6 +3,7 @@ import 'package:uet_comic/src/core/models/config.dart';
 import 'package:uet_comic/src/core/services/connectivity.dart';
 import 'package:uet_comic/src/core/view_models/shared/follow_dao.dart';
 import 'package:uet_comic/src/core/view_models/shared/like_dow.dart';
+import 'package:uet_comic/src/core/view_models/shared/search_dao.dart';
 import 'package:uet_comic/src/core/view_models/views/comic_detail.dart';
 import 'package:uet_comic/src/core/view_models/views/downloaded.dart';
 import 'package:uet_comic/src/core/view_models/views/followed.dart';
@@ -21,10 +22,13 @@ List<SingleChildCloneableWidget> getProviders(Config config) {
       builder: (context) => LikeDao(),
     ),
     ChangeNotifierProvider(
-      builder: (context) => ComicDetailPageModel(),
+      builder: (context) => SearchDao(),
     ),
     ChangeNotifierProvider(
       builder: (context) => SearchAppBarModel(),
+    ),
+    ChangeNotifierProvider(
+      builder: (context) => ComicDetailPageModel(),
     ),
     ChangeNotifierProvider(
       builder: (context) => HomePageModel(),

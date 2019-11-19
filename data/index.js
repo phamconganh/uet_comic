@@ -11,6 +11,7 @@ const comicCollection = db.collection("comic");
 const chapterCollection = db.collection("chapter");
 const authorCollection = db.collection("author");
 const typeCollection = db.collection("type");
+const searchCollection = db.collection("search");
 
 // todo can check lai \s
 
@@ -20,20 +21,20 @@ gsjson({
 })
     .then(function (result) {
 
-        /** create chapter collection */
+        // /** create chapter collection */
         const chapters = result[1];
-        chapters.forEach(chapter => {
-            try {
-                chapter.images = chapter.images.split(",");
-                for (let index = 0; index < chapter.images.length; index++) {
-                    chapter.images[index] = chapter.images[index].trim();
-                }
-                chapter.lastUpdate = new Date(Date.UTC(0) + (chapter.lastUpdate - 2) * 24 * 60 * 60 * 1000);
-                // chapterCollection.doc(chapter.id.toString()).set(chapter, { merge: true });
-            } catch (error) {
-                console.log(error)
-            }
-        });
+        // chapters.forEach(chapter => {
+        //     try {
+        //         chapter.images = chapter.images.split(",");
+        //         for (let index = 0; index < chapter.images.length; index++) {
+        //             chapter.images[index] = chapter.images[index].trim();
+        //         }
+        //         chapter.lastUpdate = new Date(Date.UTC(0) + (chapter.lastUpdate - 2) * 24 * 60 * 60 * 1000);
+        //         // chapterCollection.doc(chapter.id.toString()).set(chapter, { merge: true });
+        //     } catch (error) {
+        //         console.log(error)
+        //     }
+        // });
 
         /** create author collection */
         const authors = result[2];
@@ -47,7 +48,7 @@ gsjson({
         //     typeCollection.doc(type.id.toString()).set(type, { merge: true });
         // });
 
-        // // /** create comic collection */
+        // /** create comic collection */
         // const comics = result[0];
         // comics.forEach(comic => {
         //     try {
@@ -75,31 +76,85 @@ gsjson({
         //         delete comic.idChapters;
 
         //         comic.lastUpdate = new Date(Date.UTC(0) + (comic.lastUpdate - 2) * 24 * 60 * 60 * 1000);
-        //         let splitNames = comic.name.split(/\s+/);
+
+        //         /** tach thanh tung tu */
+        //         // let splitNames = comic.name.split(/\s+/);
+        //         // comic.searchIndexs = [];
+        //         // for (let index = 0; index < splitNames.length; index++) {
+        //         //     const splitName = splitNames[index];
+        //         //     for (let i = 0; i < splitName.length; i++) {
+        //         //         let searchIndex = splitName.substring(0, i + 1).toLowerCase();
+        //         //         comic.searchIndexs.push(searchIndex);
+        //         //         let plusSearchIndex = searchIndex.normalize("NFD")
+        //         //             .replace(/[\u0300-\u036f]/g, "")
+        //         //             .replace(/đ/g, "d")
+        //         //             .replace(/Đ/g, "D")
+        //         //         if (searchIndex !== plusSearchIndex) {
+        //         //             comic.searchIndexs.push(plusSearchIndex);
+        //         //         }
+        //         //     }
+        //         // }
+
         //         comic.searchIndexs = [];
-        //         for (let index = 0; index < splitNames.length; index++) {
-        //             const splitName = splitNames[index];
-        //             for (let i = 0; i < splitName.length; i++) {
-        //                 let searchIndex = splitName.substring(0, i + 1).toLowerCase();
-        //                 comic.searchIndexs.push(searchIndex);
-        //                 let plusSearchIndex = searchIndex.normalize("NFD")
-        //                     .replace(/[\u0300-\u036f]/g, "")
-        //                     .replace(/đ/g, "d")
-        //                     .replace(/Đ/g, "D")
-        //                 if (searchIndex !== plusSearchIndex) {
-        //                     comic.searchIndexs.push(plusSearchIndex);
-        //                 }
+        //         for (let i = 0; i < comic.name.length; i++) {
+        //             let searchIndex = comic.name.substring(0, i + 1).toLowerCase();
+        //             comic.searchIndexs.push(searchIndex);
+        //             let plusSearchIndex = searchIndex.normalize("NFD")
+        //                 .replace(/[\u0300-\u036f]/g, "")
+        //                 .replace(/đ/g, "d")
+        //                 .replace(/Đ/g, "D")
+        //             if (searchIndex !== plusSearchIndex) {
+        //                 comic.searchIndexs.push(plusSearchIndex);
         //             }
         //         }
-        //         // comicCollection.doc(comic.id.toString()).set(comic, { merge: true });
+        //         comicCollection.doc(comic.id.toString()).set(comic, { merge: true });
         //         // comicCollection.doc(comic.id.toString()).set(comic);
         //     } catch (error) {
         //         console.log(error, comic.id, comic.idTypes)
         //     }
         // });
-        
+
         // // console.log(util.inspect(comics, false, null, true /* enable colors */))
 
+
+
+        // /** create search collection */
+        const searches = result[0];
+        searches.forEach(search => {
+            try {
+                delete search.idAuthor;
+                delete search.idTypes;
+                delete search.idChapters;
+                delete search.imageLink;
+                delete search.state;
+                delete search.content;
+                delete search.view;
+                delete search.like;
+                delete search.follow;
+                delete search.age;
+                delete search.gender;
+                delete search.lastUpdate;
+
+                search.searchIndexs = [];
+                for (let i = 0; i < search.name.length; i++) {
+                    let searchIndex = search.name.substring(0, i + 1).toLowerCase();
+                    search.searchIndexs.push(searchIndex);
+                    let plusSearchIndex = searchIndex.normalize("NFD")
+                        .replace(/[\u0300-\u036f]/g, "")
+                        .replace(/đ/g, "d")
+                        .replace(/Đ/g, "D")
+                    if (searchIndex !== plusSearchIndex) {
+                        search.searchIndexs.push(plusSearchIndex);
+                    }
+                }
+                // searchCollection.doc(search.id.toString()).set(search, { merge: true });
+                searchCollection.doc(search.id.toString()).set(search);
+            } catch (error) {
+                console.log(error, searches.id);
+            }
+        });
+
+        console.log(util.inspect(searches, false, null, true /* enable colors */))
     })
     .catch(function (err) {
         console.log(err.message);

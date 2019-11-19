@@ -17,6 +17,7 @@ class SearchDao extends ChangeNotifier {
   Future init() async {
     try {
       final _nameSearchedComicsTmp = await _searchesRecord.get(await _db);
+      print(_nameSearchedComicsTmp);
       if(_nameSearchedComicsTmp != null) {
         // do _nameSearchedComicsTmp la read-only
         _nameSearchedComics = List.from(_nameSearchedComicsTmp);

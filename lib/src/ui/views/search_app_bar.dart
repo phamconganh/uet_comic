@@ -1,12 +1,22 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:uet_comic/src/core/view_models/views/search_app_bar.dart';
+import 'package:uet_comic/src/core/models/comic_cover.dart';
+import 'package:uet_comic/src/core/models/search.dart';
+import 'package:uet_comic/src/core/services/comic.dart';
+import 'package:uet_comic/src/core/services/search.dart';
+import 'package:uet_comic/src/core/view_models/shared/follow_dao.dart';
+import 'package:uet_comic/src/core/view_models/shared/like_dow.dart';
+import 'package:uet_comic/src/core/view_models/shared/search_dao.dart';
+import 'package:uet_comic/src/core/view_models/views/comic_detail.dart';
+import 'package:uet_comic/src/ui/views/comic_detail.dart';
+import 'package:uet_comic/src/ui/widgets/comic_cover.dart';
 
 class SearchAppBarDelegate extends SearchDelegate<String> {
-  final List<String> words;
-  final List<String> history;
+  SearchAppBarDelegate();
 
-  SearchAppBarDelegate({this.words, this.history});
+  @override
+  String get searchFieldLabel => 'Tìm kiếm tên truyện';
 
   // Setting leading icon for the search bar.
   // Clicking on back arrow will take control to main page
@@ -28,57 +38,103 @@ class SearchAppBarDelegate extends SearchDelegate<String> {
   // Builds page to populate search results.
   @override
   Widget buildResults(BuildContext context) {
-
-    // return Column(
-    //   children: <Widget>[
-    //     ComicCoverList(
-    //       comicCovers: model.followedComics,
-    //       choosedComic: choosedComic,
-    //       part: "Truyện đã theo dõi",
-    //     ),
-    //   ],
-    // );
-    return Padding(
-      padding: EdgeInsets.all(8.0),
-      child: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Text('===Your Word Choice==='),
-            GestureDetector(
-              onTap: () {
-                //Define your action when clicking on result item.
-                //In this example, it simply closes the page
-                close(context, query);
-              },
-              child: Text(
-                query,
-                style: Theme.of(context)
-                    .textTheme
-                    .display2
-                    .copyWith(fontWeight: FontWeight.normal),
-              ),
-            ),
-          ],
-        ),
-      ),
+    print(query);
+    return FutureBuilder<List<ComicCover>>(
+      future: ComicService.instance.fetchComicCoversByName(query.toLowerCase()),
+      builder:
+          (BuildContext context, AsyncSnapshot<List<ComicCover>> snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.none:
+            return ListTile(
+              leading: Icon(Icons.search),
+              title: Text('Press button to start.'),
+            );
+          case ConnectionState.active:
+          case ConnectionState.waiting:
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          case ConnectionState.done:
+            if (snapshot.hasError)
+              return ListTile(
+                leading: Icon(Icons.error),
+                title: Text('Lỗi mạng!'),
+              );
+            return ListView(
+              children: <Widget>[
+                const Divider(),
+                ComicCoverList(
+                  comicCovers: snapshot.data,
+                  choosedComic: (String idComic, String part) {
+                    var model = Provider.of<ComicDetailPageModel>(context);
+                    model.onLoadData(idComic);
+                    model.setFollow(Provider.of<FollowDao>(context)
+                        .idFollowedComics
+                        .contains(idComic));
+                    model.setLike(Provider.of<LikeDao>(context)
+                        .idLikedComics
+                        .contains(idComic));
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (BuildContext context) => ComicDetailPage(
+                          idComic: idComic,
+                          part: part,
+                        ),
+                      ),
+                    );
+                  },
+                  part: "searh_app_bar",
+                ),
+              ],
+            );
+        }
+        return null; // unreachable
+      },
     );
   }
 
   // Suggestions list while typing search query - this.query.
   @override
   Widget buildSuggestions(BuildContext context) {
-    final Iterable<String> suggestions =
-        query.isEmpty ? history : words.where((word) => word.startsWith(query));
+    final SearchDao searchDao = Provider.of(context);
+    final List<String> history = searchDao.nameSearchedComics;
 
+    if (query.isEmpty) {
+      return _buildSuggestions(history, searchDao, context);
+    } else {
+      return StreamBuilder<QuerySnapshot>(
+        stream: SearchService.instance.searchNameComics(query.toLowerCase()),
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (snapshot.hasError)
+            return ListTile(
+              leading: Icon(Icons.error),
+              title: Text('Lỗi mạng!'),
+            );
+          switch (snapshot.connectionState) {
+            case ConnectionState.waiting:
+              return ListTile(
+                leading: Icon(Icons.search),
+                title: Text('Loading ...'),
+              );
+            default:
+              List<String> suggestions = snapshot.data.documents
+                  .map((e) => Search.fromMap(e.data).name)
+                  .toList();
+              return _buildSuggestions(suggestions, searchDao, context);
+          }
+        },
+      );
+    }
+  }
+
+  Widget _buildSuggestions(
+      List<String> suggestions, SearchDao searchDao, BuildContext context) {
     return _WordsSuggestionWidget(
       query: query,
-      suggestions: suggestions.toList(),
+      suggestions: suggestions,
       onSelected: (String suggestion) {
         query = suggestion;
-        history.insert(0, suggestion);
-            SearchAppBarModel model = Provider.of(context);
-    model.searchComics("Nguyet Thuong");
+        searchDao.add(query);
         showResults(context);
       },
     );
@@ -98,13 +154,6 @@ class SearchAppBarDelegate extends SearchDelegate<String> {
               },
             )
           : Container(),
-      // IconButton(
-      //     icon: Icon(Icons.mic),
-      //     tooltip: 'Voice input',
-      //     onPressed: () {
-      //       query = 'TBW: Get input from voice';
-      //     },
-      //   ),
     ];
   }
 }
@@ -124,7 +173,7 @@ class _WordsSuggestionWidget extends StatelessWidget {
       itemBuilder: (BuildContext context, int i) {
         final String suggestion = suggestions[i];
         return ListTile(
-          leading: query.isEmpty ? Icon(Icons.history) : Icon(null),
+          leading: query.isEmpty ? Icon(Icons.history) : Icon(Icons.search),
           // Highlight the substring that matched the query.
           title: RichText(
             text: TextSpan(

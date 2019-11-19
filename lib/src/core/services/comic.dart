@@ -66,25 +66,12 @@ class ComicService {
     return followedComicCovers;
   }
 
-  // Future<List<ComicCover>> fetchComicCoversByName(String name) async {
-  //   QuerySnapshot data = await ref.where("searchIndexs", arrayContains: name).limit(10).getDocuments();
-  //   return mapToComicCover(data);
-  // }
-
   Future<List<ComicCover>> fetchComicCoversByName(String name) async {
-    List<String> names = name.trim().toLowerCase().split(" ");
-    print(names);
-    var searchRef = ref.where("searchIndexs", arrayContains: ["nguyet"]);
-    // for (var i = 0; i < names.length; i++) {
-    //   if (i == 0) {
-    //     searchRef = ref.where("searchIndexs", arrayContains: names[i]);
-    //   } else {
-    //     searchRef = searchRef.where("searchIndexs", arrayContains: names[i]);
-    //   }
-    // }
-    QuerySnapshot data = await searchRef.limit(10).getDocuments();
-    return mapToComicCover(data);
+    QuerySnapshot querySnapshot =
+        await ref.where("searchIndexs", arrayContains: name).getDocuments();
+    return querySnapshot.documents.map((e) => ComicCover.fromMap(e.data)).toList();
   }
+
   // Stream<QuerySnapshot> fetchComicsAsStream() {
   //   return _api.streamDataCollection();
   // }

@@ -22,7 +22,9 @@ class ComicCoverList extends StatelessWidget {
         comicCovers.length,
         (index) => InkWell(
           onTap: () {
-            choosedComic(comicCovers[index].id, part);
+            if(choosedComic != null) {
+              choosedComic(comicCovers[index].id, part);
+            }
           },
           child: ComicCoverItem(
             comicCover: comicCovers[index],
