@@ -1,46 +1,47 @@
 import 'package:provider/provider.dart';
 import 'package:uet_comic/src/core/models/config.dart';
-import 'package:uet_comic/src/core/services/author.dart';
-import 'package:uet_comic/src/core/services/chapter.dart';
-import 'package:uet_comic/src/core/services/comic.dart';
 import 'package:uet_comic/src/core/services/connectivity.dart';
-import 'package:uet_comic/src/core/services/type.dart';
-// import 'package:uet_comic/src/core/services/api.dart';
+import 'package:uet_comic/src/core/view_models/shared/follow_dao.dart';
+import 'package:uet_comic/src/core/view_models/shared/like_dow.dart';
+import 'package:uet_comic/src/core/view_models/views/comic_detail.dart';
+import 'package:uet_comic/src/core/view_models/views/downloaded.dart';
+import 'package:uet_comic/src/core/view_models/views/followed.dart';
+import 'package:uet_comic/src/core/view_models/views/home.dart';
+import 'package:uet_comic/src/core/view_models/views/search_app_bar.dart';
 
 List<SingleChildCloneableWidget> getProviders(Config config) {
   List<SingleChildCloneableWidget> independentServices = [
     Provider.value(
       value: config,
     ),
-    Provider.value(
-      value: ComicService(),
+    ChangeNotifierProvider(
+      builder: (context) => FollowDao(),
     ),
-    Provider.value(
-      value: ChapterService(),
+    ChangeNotifierProvider(
+      builder: (context) => LikeDao(),
     ),
-    Provider.value(
-      value: AuthorService(),
+    ChangeNotifierProvider(
+      builder: (context) => ComicDetailPageModel(),
     ),
-    Provider.value(
-      value: TypeService(),
+    ChangeNotifierProvider(
+      builder: (context) => SearchAppBarModel(),
+    ),
+    ChangeNotifierProvider(
+      builder: (context) => HomePageModel(),
+    ),
+    ChangeNotifierProvider(
+      builder: (context) => DownloadedPageModel(),
     ),
     StreamProvider.value(
       value: ConnectivityService().networkStatusController.stream,
     )
   ];
 
-  // List<SingleChildCloneableWidget> dependentServices = [
-  //   ProxyProvider<Config, Api>(
-  //     builder: (context, config, api) => Api(apiURL: config.apiKey),
-  //   )
-  // ];
-
-  // List<SingleChildCloneableWidget> dependentServices = [
-  //   ProxyProvider<Api, AuthenticationService>(
-  //     builder: (context, api, authenticationService) =>
-  //         AuthenticationService(api: api),
-  //   )
-  // ];
+  List<SingleChildCloneableWidget> dependentServices = [
+    ChangeNotifierProxyProvider<FollowDao, FollowedPageModel>(
+      builder: (_, followDao, __) => FollowedPageModel(followDao: followDao),
+    ),
+  ];
 
   // List<SingleChildCloneableWidget> uiConsumableProviders = [
   //   StreamProvider<User>(
@@ -50,7 +51,7 @@ List<SingleChildCloneableWidget> getProviders(Config config) {
 
   List<SingleChildCloneableWidget> providers = [
     ...independentServices,
-    // ...dependentServices,
+    ...dependentServices,
     // ...uiConsumableProviders
   ];
 

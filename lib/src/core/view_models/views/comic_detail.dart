@@ -6,14 +6,35 @@ import 'package:uet_comic/src/core/services/author.dart';
 import 'package:uet_comic/src/core/services/chapter.dart';
 import 'package:uet_comic/src/core/services/comic.dart';
 import 'package:uet_comic/src/core/services/type.dart';
-import 'package:uet_comic/src/core/models/type.dart' as comic_type;
 
 class ComicDetailPageModel extends ChangeNotifier {
-  ComicService comicService;
-  ChapterService chapterService;
-  TypeService typeService;
-  AuthorService authorService;
-  ComicDetailPageModel({@required this.comicService, this.chapterService, this.typeService, this.authorService});
+  ComicService comicService = ComicService();
+  ChapterService chapterService = ChapterService();
+  TypeService typeService = TypeService();
+  AuthorService authorService = AuthorService();
+
+  bool _isFollowed = false;
+  bool get isFollowed => _isFollowed;
+  void setFollow(bool value) {
+    _isFollowed = value;
+    notifyListeners();
+  }
+
+  bool _isLiked = false;
+  bool get isLiked => _isLiked;
+  void setLike(bool value) {
+    _isLiked = value;
+    notifyListeners();
+  }
+
+  Future<void> onLoadData(idComic) async {
+    if (idComic != null) {
+      fetchComicDetail(idComic);
+      fetchChapters(idComic);
+      fetchSameComics();
+    }
+    return;
+  }
 
   bool _isFetchingComicDetail;
   bool get isFetchingComicDetail => _isFetchingComicDetail;
@@ -49,16 +70,8 @@ class ComicDetailPageModel extends ChangeNotifier {
     setBusyComicDetail(true);
     try {
       _comicDetail = await comicService.fetchComicById(idComic);
-      _comicDetail.author = await authorService.fetchAuthorById(_comicDetail.idAuthor);
-      _comicDetail.types = [];
-      List<comic_type.Type> types = [];
-      for (var i = 0; i < _comicDetail.idTypes.length; i++) {
-        comic_type.Type type = await typeService.fetchTypeById(_comicDetail.idTypes[i]);
-        types.add(type);
-      }
-      _comicDetail.types = types;
     } catch (e) {
-      print(e);
+      print("Error fetchComicDetail: ${e.toString()}");
     }
     setBusyComicDetail(false);
   }
@@ -78,8 +91,7 @@ class ComicDetailPageModel extends ChangeNotifier {
           name: "Test asdasd asdasdasd adasdasd asdasdad adasdasda",
           lastUpdate: DateTime.now(),
           lastChapter: "1",
-          imageLink:
-              "https://i.imgur.com/d9EEHCS.jpg",
+          imageLink: "https://i.imgur.com/d9EEHCS.jpg",
           // "http://3.bp.blogspot.com/-LHURB4jzEx4/Xalm8fUkWUI/AAAAAAAAAk8/IcOExDRGY7c1um5Xi0ePNSZs6Lb0rmRCgCKgBGAsYHg/s0/02.jpg?imgmax=0",
         ),
       );

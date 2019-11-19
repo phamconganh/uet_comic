@@ -11,21 +11,33 @@ class ComicService {
   final CollectionReference ref = Firestore.instance.collection('comic');
 
   Future<List<ComicCover>> fetchNewComicCovers() async {
-    QuerySnapshot data = await ref.orderBy("lastUpdate", descending: true).limit(10).getDocuments();
+    QuerySnapshot data = await ref
+        .orderBy("lastUpdate", descending: true)
+        .limit(10)
+        .getDocuments();
     return mapToComicCover(data);
   }
 
   Future<List<ComicCover>> fetchMaleComicCovers() async {
-    QuerySnapshot data = await ref.where("gender", isEqualTo: 0).orderBy("view", descending: true).limit(10).getDocuments();
+    QuerySnapshot data = await ref
+        .where("gender", isEqualTo: 0)
+        .orderBy("view", descending: true)
+        .limit(10)
+        .getDocuments();
     return mapToComicCover(data);
   }
 
   Future<List<ComicCover>> fetchFemaleComicCovers() async {
-    QuerySnapshot data = await ref.where("gender", isEqualTo: 1).orderBy("view", descending: true).limit(10).getDocuments();
+    QuerySnapshot data = await ref
+        .where("gender", isEqualTo: 1)
+        .orderBy("view", descending: true)
+        .limit(10)
+        .getDocuments();
     return mapToComicCover(data);
   }
 
-  List<ComicCover> mapToComicCover(QuerySnapshot data) => data.documents.map((doc) => ComicCover.fromMap(doc.data)).toList();
+  List<ComicCover> mapToComicCover(QuerySnapshot data) =>
+      data.documents.map((doc) => ComicCover.fromMap(doc.data)).toList();
 
   Future<Comic> fetchComicById(String id) async {
     DocumentSnapshot documentSnapshot = await ref.document(id).get();
@@ -33,10 +45,46 @@ class ComicService {
   }
 
   Future<List<ComicCover>> fetchSameComicCover(List<String> idTypes) async {
-    QuerySnapshot data = await ref.where("gender", isEqualTo: 1).orderBy("view", descending: true).limit(10).getDocuments();
+    QuerySnapshot data = await ref
+        .where("gender", isEqualTo: 1)
+        .orderBy("view", descending: true)
+        .limit(10)
+        .getDocuments();
     return mapToComicCover(data);
   }
 
+  Future<List<ComicCover>> fetchFollowedComicCovers(
+      List<String> idFollowedComics) async {
+    List<ComicCover> followedComicCovers = [];
+    for (var i = 0; i < idFollowedComics.length; i++) {
+      DocumentSnapshot documentSnapshot =
+          await ref.document(idFollowedComics[i]).get();
+      if (documentSnapshot != null) {
+        followedComicCovers.add(ComicCover.fromMap(documentSnapshot.data));
+      }
+    }
+    return followedComicCovers;
+  }
+
+  // Future<List<ComicCover>> fetchComicCoversByName(String name) async {
+  //   QuerySnapshot data = await ref.where("searchIndexs", arrayContains: name).limit(10).getDocuments();
+  //   return mapToComicCover(data);
+  // }
+
+  Future<List<ComicCover>> fetchComicCoversByName(String name) async {
+    List<String> names = name.trim().toLowerCase().split(" ");
+    print(names);
+    var searchRef = ref.where("searchIndexs", arrayContains: ["nguyet"]);
+    // for (var i = 0; i < names.length; i++) {
+    //   if (i == 0) {
+    //     searchRef = ref.where("searchIndexs", arrayContains: names[i]);
+    //   } else {
+    //     searchRef = searchRef.where("searchIndexs", arrayContains: names[i]);
+    //   }
+    // }
+    QuerySnapshot data = await searchRef.limit(10).getDocuments();
+    return mapToComicCover(data);
+  }
   // Stream<QuerySnapshot> fetchComicsAsStream() {
   //   return _api.streamDataCollection();
   // }

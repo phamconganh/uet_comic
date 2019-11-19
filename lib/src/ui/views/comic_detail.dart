@@ -1,32 +1,41 @@
+import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:uet_comic/src/core/models/chapter.dart';
+import 'package:uet_comic/src/core/view_models/shared/follow_dao.dart';
+import 'package:uet_comic/src/core/view_models/shared/like_dow.dart';
 import 'package:uet_comic/src/core/view_models/views/comic_detail.dart';
+import 'package:uet_comic/src/ui/shared/theme.dart';
 import 'package:uet_comic/src/ui/views/chapter_detail.dart';
 import 'package:uet_comic/src/ui/widgets/card_image.dart';
 import 'package:uet_comic/src/ui/widgets/chapter.dart';
-import 'package:uet_comic/src/ui/widgets/comic_cover.dart';
-import 'package:uet_comic/src/ui/widgets/comic_info.dart';
 import 'package:uet_comic/src/ui/widgets/responsive_grid.dart';
+import 'package:uet_comic/src/ui/widgets/type.dart';
 
 class ComicDetailPage extends StatefulWidget {
   final String idComic;
+  final String part;
 
-  ComicDetailPage({Key key, @required this.idComic}) : super(key: key);
+  ComicDetailPage({Key key, @required this.idComic, @required this.part})
+      : super(key: key);
 
   @override
   _ComicDetailPageState createState() => _ComicDetailPageState();
 }
 
 class _ComicDetailPageState extends State<ComicDetailPage> {
-  ComicDetailPageModel comicDetailPageModel;
+  ComicDetailPageModel model;
+  FollowDao followDao;
+  LikeDao likeDao;
 
-  void choosedComic(String data) {
+  void choosedComic(String data, String part) {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (BuildContext context) => ComicDetailPage(
           // idComic: idComic,
           idComic: "99",
+          part: part,
         ),
       ),
     );
@@ -40,7 +49,7 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
           builder: (BuildContext context) => ChapterDetailPage(
             indexChapter: index,
             chapters: chapters,
-            comic: comicDetailPageModel.comicDetail,
+            // comic: model.comicDetail,
           ),
         ),
       );
@@ -50,19 +59,31 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
           builder: (BuildContext context) => ChapterDetailPage(
             indexChapter: 0,
             chapters: chapters,
-            comic: comicDetailPageModel.comicDetail,
+            // comic: model.comicDetail,
           ),
         ),
       );
     }
   }
 
-  void onFollowing() {
-    print("Follow comic id ${widget.idComic}");
+  void follow() {
+    model.setFollow(true);
+    followDao.add(model.comicDetail.id);
   }
 
-  void onLiking() {
-    print("Like comic id ${widget.idComic}");
+  void unFollow() {
+    model.setFollow(false);
+    followDao.remove(model.comicDetail.id);
+  }
+
+  void like() {
+    model.setLike(true);
+    likeDao.add(model.comicDetail.id);
+  }
+
+  void unLike() {
+    model.setLike(false);
+    likeDao.remove(model.comicDetail.id);
   }
 
   void onLoadMoreChapter() {
@@ -105,32 +126,24 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
     );
   }
 
-  Future<void> onLoadData() async {
-    comicDetailPageModel.fetchComicDetail(widget.idComic);
-    comicDetailPageModel.fetchChapters(widget.idComic);
-    comicDetailPageModel.fetchSameComics();
-    return;
-  }
-
   @override
   Widget build(BuildContext context) {
-    if (comicDetailPageModel == null) {
-      comicDetailPageModel = ComicDetailPageModel(
-        comicService: Provider.of(context),
-        chapterService: Provider.of(context),
-        authorService: Provider.of(context),
-        typeService: Provider.of(context),
-      );
-      onLoadData();
+    if (model == null) {
+      model = Provider.of(context);
+    }
+    if (followDao == null) {
+      followDao = Provider.of(context);
+    }
+    if (likeDao == null) {
+      likeDao = Provider.of(context);
     }
     return Scaffold(
       appBar: AppBar(
         title: Text("Chi tiết truyện"),
       ),
       body: SingleChildScrollView(
-        child: ChangeNotifierProvider(
-          builder: (_) => comicDetailPageModel,
-          child: Consumer<ComicDetailPageModel>(builder: (__, model, child) {
+        child: Consumer<ComicDetailPageModel>(
+          builder: (_, model, __) {
             return Column(
               children: <Widget>[
                 const Divider(),
@@ -149,7 +162,7 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
                               xl: 3,
                               child: Center(
                                 child: Hero(
-                                  tag: widget.idComic,
+                                  tag: widget.idComic + widget.part,
                                   child: CardImage(
                                     imageLink: model.comicDetail.imageLink,
                                   ),
@@ -162,40 +175,13 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
                               md: 12,
                               lg: 9,
                               xl: 9,
-                              child: ComicInfo(
-                                comic: model.comicDetail,
-                                read: () {
-                                  onReadIndexChapter(model.chapters, null);
-                                },
-                                follow: onFollowing,
-                                like: onLiking,
-                                findComicByType: onFindComicByType,
-                              ),
+                              child: _buildComicInfo(),
                             ),
                           ],
                         ),
                 ),
                 const Divider(),
-                ListTile(
-                  leading: const Icon(
-                    Icons.list,
-                    color: Colors.orange,
-                  ),
-                  title: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      const Text(
-                        "Danh sách chương",
-                        style: TextStyle(color: Colors.orange),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.cloud_download),
-                        onPressed: downloadAllChapter,
-                      )
-                    ],
-                  ),
-                ),
+                _buildTitleChapters(),
                 Container(
                   child: model.isFetchingChapters
                       ? Center(
@@ -212,36 +198,202 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
                 //   onPressed: () {},
                 //   child: Text('Load more'),
                 // ),
-                const Divider(),
-                const ListTile(
-                  leading: const Icon(
-                    Icons.featured_play_list,
-                    color: Colors.purple,
-                  ),
-                  title: const Text(
-                    "Cùng thể loại",
-                    style: TextStyle(color: Colors.purple),
+                // const Divider(),
+                // const ListTile(
+                //   leading: const Icon(
+                //     Icons.featured_play_list,
+                //     color: Colors.purple,
+                //   ),
+                //   title: const Text(
+                //     "Cùng thể loại",
+                //     style: TextStyle(color: Colors.purple),
+                //     overflow: TextOverflow.ellipsis,
+                //   ),
+                // ),
+                // Container(
+                //   child: model.isFetchingSameComics
+                //       ? Center(
+                //           child: CircularProgressIndicator(),
+                //         )
+                //       : ComicCoverList(
+                //           comicCovers: model.sameComics,
+                //           choosedComic: choosedComic,
+                //           part: widget.part,
+                //         ),
+                // ),
+                heightPadding,
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTitleChapters() {
+    return ListTile(
+      leading: const Icon(
+        Icons.list,
+        color: Colors.orange,
+      ),
+      title: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          const Text(
+            "Danh sách chương",
+            style: TextStyle(color: Colors.orange),
+            overflow: TextOverflow.ellipsis,
+          ),
+          IconButton(
+            icon: const Icon(Icons.cloud_download),
+            onPressed: downloadAllChapter,
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _buildComicInfo() {
+    return Consumer<ComicDetailPageModel>(
+      builder: (_, model, __) {
+        String state =
+            model.comicDetail.state == 0 ? "Chưa hoàn thành" : "Đã hoàn thành";
+
+        final Widget readFirstButton = RaisedButton.icon(
+          icon: const Icon(Icons.book),
+          label: const Text(
+            "Đọc từ đầu",
+            overflow: TextOverflow.ellipsis,
+          ),
+          onPressed: () {
+            onReadIndexChapter(model.chapters, null);
+          },
+          shape: boderButton,
+        );
+
+        final Widget unfollowButton = RaisedButton.icon(
+          icon: const Icon(FontAwesomeIcons.heartBroken),
+          label: const Text(
+            "Bỏ theo dõi",
+            overflow: TextOverflow.ellipsis,
+          ),
+          onPressed: unFollow,
+          shape: boderButton,
+        );
+
+        final Widget followButton = RaisedButton.icon(
+          icon: const Icon(FontAwesomeIcons.heart),
+          label: const Text(
+            "Theo dõi",
+            overflow: TextOverflow.ellipsis,
+          ),
+          onPressed: follow,
+          shape: boderButton,
+        );
+
+        final Widget likeButton = RaisedButton.icon(
+          icon: const Icon(Icons.thumb_up),
+          label: const Text(
+            "Thích",
+            overflow: TextOverflow.ellipsis,
+          ),
+          onPressed: like,
+          shape: boderButton,
+        );
+
+        final Widget unLikeButton = RaisedButton.icon(
+          icon: const Icon(Icons.thumb_down),
+          label: const Text(
+            "Bỏ thích",
+            overflow: TextOverflow.ellipsis,
+          ),
+          onPressed: unLike,
+          shape: boderButton,
+        );
+
+        return Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                model.comicDetail.name,
+                style: Theme.of(context).textTheme.headline,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+              ),
+              heightSpace,
+              Text(
+                "Tác giả: ${model.comicDetail?.author?.name}",
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                "Tình trạng: $state",
+                overflow: TextOverflow.ellipsis,
+              ),
+              heightSpace,
+              Container(
+                width: double.infinity,
+                child: Wrap(
+                  spacing: 5.0,
+                  alignment: WrapAlignment.center,
+                  children: <Widget>[
+                    readFirstButton,
+                    model.isFollowed ? unfollowButton : followButton,
+                    model.isLiked ? unLikeButton : likeButton,
+                  ],
+                ),
+              ),
+              heightSpace,
+              Wrap(
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  const Text('Thống kê: '),
+                  const Icon(Icons.thumb_up),
+                  Text(' ${model.comicDetail.like}  '),
+                  const Icon(FontAwesomeIcons.heart),
+                  Text(' ${model.comicDetail.follow}  '),
+                  const Icon(Icons.remove_red_eye),
+                  Text(' ${model.comicDetail.view}')
+                ],
+              ),
+              heightSpace,
+              TypeList(
+                types: model.comicDetail.types,
+                findComicByType: null,
+              ),
+              ExpandablePanel(
+                header: const Text(
+                  "Nội dung truyện",
+                  overflow: TextOverflow.ellipsis,
+                ),
+                headerAlignment: ExpandablePanelHeaderAlignment.center,
+                collapsed: Padding(
+                  padding: const EdgeInsets.only(left: 5.0, right: 5.0),
+                  child: Text(
+                    model.comicDetail.content,
+                    softWrap: true,
+                    maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                Container(
-                  child: model.isFetchingSameComics
-                      ? Center(
-                          child: CircularProgressIndicator(),
-                        )
-                      : ComicCoverList(
-                          comicCovers: model.sameComics,
-                          choosedComic: choosedComic,
-                        ),
+                expanded: Padding(
+                  padding: const EdgeInsets.only(left: 5.0),
+                  child: Text(
+                    model.comicDetail.content,
+                    softWrap: true,
+                  ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(10),
-                )
-              ],
-            );
-          }),
-        ),
-      ),
+                tapHeaderToExpand: true,
+                tapBodyToCollapse: true,
+                hasIcon: true,
+              )
+            ],
+          ),
+        );
+      },
     );
   }
 }

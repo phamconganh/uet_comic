@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:uet_comic/src/core/view_models/shared/follow_dao.dart';
+import 'package:uet_comic/src/core/view_models/shared/like_dow.dart';
+import 'package:uet_comic/src/core/view_models/views/comic_detail.dart';
 import 'package:uet_comic/src/core/view_models/views/home.dart';
 import 'package:uet_comic/src/ui/views/comic_detail.dart';
 import 'package:uet_comic/src/ui/widgets/comic_cover.dart';
@@ -12,42 +15,32 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage>
-    with AutomaticKeepAliveClientMixin {
-  @override
-  bool get wantKeepAlive => true;
-  HomePageModel homePageModel;
+class _HomePageState extends State<HomePage> {
+  void choosedComic(String idComic, String part) {
+    var model = Provider.of<ComicDetailPageModel>(context);
+    model.onLoadData(idComic);
+    model.setFollow(
+        Provider.of<FollowDao>(context).idFollowedComics.contains(idComic));
+    model
+        .setLike(Provider.of<LikeDao>(context).idLikedComics.contains(idComic));
 
-  void choosedComic(String idComic) {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (BuildContext context) => ComicDetailPage(
           idComic: idComic,
+          part: part,
         ),
       ),
     );
   }
 
-  Future<void> onLoadData() async {
-    homePageModel.fetchNewComicCovers();
-    homePageModel.fetchMaleComicCovers();
-    homePageModel.fetchFemaleComicCovers();
-    return;
-  }
-
   @override
   Widget build(BuildContext context) {
-    super.build(context);
-    if(homePageModel == null) {
-      homePageModel = HomePageModel(comicService: Provider.of(context));
-      onLoadData();
-    }
-    return RefreshIndicator(
-      onRefresh: onLoadData,
-      child: ChangeNotifierProvider(
-        builder: (_) => homePageModel,
-        child: Consumer<HomePageModel>(
-          builder: (__, model, child) => ListView(
+    return Consumer<HomePageModel>(
+      builder: (_, model, __) {
+        return RefreshIndicator(
+          onRefresh: model.onLoadData,
+          child: ListView(
             children: <Widget>[
               const Divider(),
               const ListTile(
@@ -68,6 +61,7 @@ class _HomePageState extends State<HomePage>
                           ComicCoverList(
                             comicCovers: model.newComicCovers,
                             choosedComic: choosedComic,
+                            part: "Truyện mới cập nhật",
                           ),
                         ],
                       ),
@@ -94,6 +88,7 @@ class _HomePageState extends State<HomePage>
                           ComicCoverList(
                             comicCovers: model.maleComicCovers,
                             choosedComic: choosedComic,
+                            part: "Truyện con trai",
                           ),
                         ],
                       ),
@@ -120,15 +115,15 @@ class _HomePageState extends State<HomePage>
                           ComicCoverList(
                             comicCovers: model.femaleComicCovers,
                             choosedComic: choosedComic,
+                            part: "Truyện con gái",
                           ),
                         ],
                       ),
               ),
-              const Divider(),
             ],
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

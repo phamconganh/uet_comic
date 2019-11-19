@@ -11,6 +11,7 @@ class ComicInfo extends StatelessWidget {
   final VoidCallback read;
   final VoidCallback follow;
   final VoidCallback like;
+  final VoidCallback continueRead;
   final StringCallback findComicByType;
 
   ComicInfo({
@@ -19,6 +20,7 @@ class ComicInfo extends StatelessWidget {
     this.read,
     this.follow,
     this.like,
+    this.continueRead,
     this.findComicByType,
   }) : super(key: key);
 

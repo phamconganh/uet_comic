@@ -56,3 +56,12 @@ TextTheme _buildShrineTextTheme(TextTheme base) {
         bodyColor: kUetComicBrown900,
       );
 }
+
+final RoundedRectangleBorder boderButton = RoundedRectangleBorder(
+  borderRadius: BorderRadius.circular(18.0),
+);
+final heightSpace = const SizedBox(height: 8);
+
+final heightPadding = Padding(
+  padding: const EdgeInsets.all(10),
+);

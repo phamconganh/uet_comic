@@ -15,11 +15,12 @@ class _DownloadedPageState extends State<DownloadedPage>
   bool get wantKeepAlive => true;
   DownloadedPageModel downloadedPageModel;
 
-  void choosedComic(String idComic) {
+  void choosedComic(String idComic, String part) {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (BuildContext context) => ComicDetailPage(
           idComic: idComic,
+          part: part,
         ),
       ),
     );
@@ -48,7 +49,7 @@ class _DownloadedPageState extends State<DownloadedPage>
                   const ListTile(
                     leading: const Icon(Icons.folder, color: Colors.red),
                     title: const Text(
-                      "Truyện đã theo dõi",
+                      "Truyện đã tải",
                       style: TextStyle(color: Colors.red),
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -58,6 +59,7 @@ class _DownloadedPageState extends State<DownloadedPage>
                       ComicCoverList(
                         comicCovers: model.downloadedComics,
                         choosedComic: choosedComic,
+                        part: "Truyện đã tải",
                       ),
                     ],
                   ),

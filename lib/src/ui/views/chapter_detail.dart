@@ -69,8 +69,8 @@ class _ChapterDetailPageState extends State<ChapterDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      builder: (_) => chapterDetailPageModel,
+    return ChangeNotifierProvider.value(
+      value: chapterDetailPageModel,
       child: Consumer<ChapterDetailPageModel>(
         builder: (__, model, ___) {
           return Scaffold(
@@ -133,7 +133,7 @@ class _ChapterDetailPageState extends State<ChapterDetailPage> {
                   return DropdownMenuItem(
                     child: Center(
                       child:
-                          Text('Chương ${chapterDetailPageModel.chapters[index].name}'),
+                          Text('${chapterDetailPageModel.chapters[index].name}'),
                     ),
                     value: index,
                   );

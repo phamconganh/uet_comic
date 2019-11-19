@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:uet_comic/src/core/view_models/views/search_app_bar.dart';
 
 class SearchAppBarDelegate extends SearchDelegate<String> {
   final List<String> words;
@@ -26,6 +28,16 @@ class SearchAppBarDelegate extends SearchDelegate<String> {
   // Builds page to populate search results.
   @override
   Widget buildResults(BuildContext context) {
+
+    // return Column(
+    //   children: <Widget>[
+    //     ComicCoverList(
+    //       comicCovers: model.followedComics,
+    //       choosedComic: choosedComic,
+    //       part: "Truyện đã theo dõi",
+    //     ),
+    //   ],
+    // );
     return Padding(
       padding: EdgeInsets.all(8.0),
       child: Center(
@@ -56,9 +68,8 @@ class SearchAppBarDelegate extends SearchDelegate<String> {
   // Suggestions list while typing search query - this.query.
   @override
   Widget buildSuggestions(BuildContext context) {
-    final Iterable<String> suggestions = query.isEmpty
-        ? history
-        : words.where((word) => word.startsWith(query));
+    final Iterable<String> suggestions =
+        query.isEmpty ? history : words.where((word) => word.startsWith(query));
 
     return _WordsSuggestionWidget(
       query: query,
@@ -66,6 +77,8 @@ class SearchAppBarDelegate extends SearchDelegate<String> {
       onSelected: (String suggestion) {
         query = suggestion;
         history.insert(0, suggestion);
+            SearchAppBarModel model = Provider.of(context);
+    model.searchComics("Nguyet Thuong");
         showResults(context);
       },
     );
@@ -84,16 +97,16 @@ class SearchAppBarDelegate extends SearchDelegate<String> {
                 showSuggestions(context);
               },
             )
-          : IconButton(
-              icon: Icon(Icons.mic),
-              tooltip: 'Voice input',
-              onPressed: () {
-                query = 'TBW: Get input from voice';
-              },
-            ),
+          : Container(),
+      // IconButton(
+      //     icon: Icon(Icons.mic),
+      //     tooltip: 'Voice input',
+      //     onPressed: () {
+      //       query = 'TBW: Get input from voice';
+      //     },
+      //   ),
     ];
   }
-
 }
 
 class _WordsSuggestionWidget extends StatelessWidget {

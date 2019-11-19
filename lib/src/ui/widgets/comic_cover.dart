@@ -7,9 +7,10 @@ import 'package:uet_comic/src/ui/widgets/responsive_grid.dart';
 
 class ComicCoverList extends StatelessWidget {
   final List<ComicCover> comicCovers;
-  final StringCallback choosedComic;
+  final StringPartCallback choosedComic;
+  final String part;
 
-  ComicCoverList({Key key, @required this.comicCovers, this.choosedComic})
+  ComicCoverList({Key key, @required this.comicCovers, @required this.part, this.choosedComic})
       : super(key: key);
 
   @override
@@ -21,10 +22,11 @@ class ComicCoverList extends StatelessWidget {
         comicCovers.length,
         (index) => InkWell(
           onTap: () {
-            choosedComic(comicCovers[index].id);
+            choosedComic(comicCovers[index].id, part);
           },
           child: ComicCoverItem(
             comicCover: comicCovers[index],
+            part: part,
           ),
         ),
       ),
@@ -34,19 +36,19 @@ class ComicCoverList extends StatelessWidget {
 
 class ComicCoverItem extends StatelessWidget {
   final ComicCover comicCover;
+  final String part;
 
-  ComicCoverItem({Key key, @required this.comicCover}) : super(key: key);
+  ComicCoverItem({Key key, @required this.comicCover, @required this.part}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
         Hero(
-          tag: comicCover.id,
+          tag: comicCover.id + part,
           child:
           CardImage(
             imageLink: comicCover.imageLink,
@@ -60,7 +62,7 @@ class ComicCoverItem extends StatelessWidget {
           maxLines: 2,
         ),
         Text(
-          "Chuong ${comicCover.lastChapter}",
+          "${comicCover.lastChapter}",
           style: theme.textTheme.caption,
           overflow: TextOverflow.ellipsis,
           maxLines: 1,

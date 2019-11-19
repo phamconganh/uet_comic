@@ -74,7 +74,7 @@ class _BottomChapterBarState extends State<BottomChapterBar> {
                 items: List.generate(widget.chapters.length, (index) {
                   return DropdownMenuItem(
                     child: Center(
-                      child: Text('Chương ${widget.chapters[index].name}'),
+                      child: Text('${widget.chapters[index].name}'),
                     ),
                     value: index,
                   );

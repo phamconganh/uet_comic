@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:intl/intl.dart';
 import 'package:uet_comic/src/core/models/chapter.dart';
 import 'package:uet_comic/src/ui/shared/type_def.dart';
 
@@ -36,8 +35,6 @@ class ChapterList extends StatelessWidget {
   }
 }
 
-final formatter = DateFormat('dd-mm-yy');
-
 class ChapterItem extends StatelessWidget {
   final Chapter chapter;
 
@@ -45,12 +42,14 @@ class ChapterItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String lastUpdate = chapter.lastUpdate != null
+        ? "${chapter.lastUpdate.day.toString().padLeft(2, '0')}-${chapter.lastUpdate.month.toString().padLeft(2, '0')}-${chapter.lastUpdate.year.toString()}"
+        : '18/11/19';
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        Text("Chuong ${chapter.name}"),
-        Text(
-            "${chapter.lastUpdate != null ? formatter.format(chapter.lastUpdate) : '18/11/19'}"),
+        Text("${chapter.name}"),
+        Text(lastUpdate),
       ],
     );
   }

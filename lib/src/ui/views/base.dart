@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
+import 'package:uet_comic/src/ui/views/comic_detail.dart';
 import 'package:uet_comic/src/ui/views/downloaded.dart';
+import 'package:uet_comic/src/ui/views/filter.dart';
 import 'package:uet_comic/src/ui/views/followed.dart';
 import 'package:uet_comic/src/ui/views/home.dart';
-import 'package:uet_comic/src/ui/views/search.dart';
 import 'package:english_words/english_words.dart' as words;
 import 'package:uet_comic/src/ui/views/settings.dart';
 import 'package:uet_comic/src/ui/widgets/bottom_nav_bar.dart';
-import 'package:uet_comic/src/ui/widgets/search_app_bar.dart';
+import 'package:uet_comic/src/ui/views/search_app_bar.dart';
+import 'package:uet_comic/src/core/view_models/shared/follow_dao.dart';
+import 'package:uet_comic/src/core/view_models/shared/like_dow.dart';
+import 'package:uet_comic/src/core/view_models/views/comic_detail.dart';
 
 class BasePage extends StatefulWidget {
   final String title;
@@ -23,7 +28,7 @@ class _BasePageState extends State<BasePage> {
   final pageController = PageController();
   final bodyList = <Widget>[
     HomePage(),
-    SearchPage(),
+    FilterPage(),
     FollowedPage(),
     DownloadedPage(),
   ];
@@ -65,7 +70,10 @@ class _BasePageState extends State<BasePage> {
   @override
   void initState() {
     super.initState();
-    _searchDelegate = SearchAppBarDelegate(words: kWords, history: ['apple', 'orange', 'banana', 'watermelon'],);
+    _searchDelegate = SearchAppBarDelegate(
+      words: kWords,
+      history: ['apple', 'orange', 'banana', 'watermelon'],
+    );
   }
 
   void onPageChanged(int index) {
@@ -77,13 +85,29 @@ class _BasePageState extends State<BasePage> {
   //Shows Search result
   void showSearchPage(
       BuildContext context, SearchAppBarDelegate searchDelegate) async {
-    final String selected = await showSearch<String>(
+    final String idSelected = await showSearch<String>(
       context: context,
       delegate: searchDelegate,
     );
 
-    if (selected != null) {
-      print(selected);
+    if (idSelected != null) {
+      // var model = Provider.of<ComicDetailPageModel>(context);
+      // model.onLoadData(idSelected);
+      // model.setFollow(Provider.of<FollowDao>(context)
+      //     .idFollowedComics
+      //     .contains(idSelected));
+      // model.setLike(
+      //     Provider.of<LikeDao>(context).idLikedComics.contains(idSelected));
+
+      // Navigator.of(context).push(
+      //   MaterialPageRoute(
+      //     builder: (BuildContext context) => ComicDetailPage(
+      //       idComic: idSelected,
+      //       part: "search_app_bar",
+      //     ),
+      //   ),
+      // );
+      print(idSelected);
       // Scaffold.of(context).showSnackBar(
       //   SnackBar(
       //     content: Text('Your Word Choice: $selected'),

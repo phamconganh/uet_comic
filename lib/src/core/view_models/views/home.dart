@@ -3,10 +3,20 @@ import 'package:uet_comic/src/core/models/comic_cover.dart';
 import 'package:uet_comic/src/core/services/comic.dart';
 
 class HomePageModel extends ChangeNotifier {
-  List<ComicCover> covers = [];
-  ComicService comicService;
+  HomePageModel() {
+    onLoadData();
+  }
 
-  HomePageModel({@required this.comicService}): assert(comicService != null);
+  Future<void> onLoadData() async {
+    print("onLoadData");
+    // fetchNewComicCovers();
+    // fetchMaleComicCovers();
+    // fetchFemaleComicCovers();
+    return;
+  }
+
+  List<ComicCover> covers = [];
+  ComicService comicService = ComicService();
 
   bool _isFetchingNewComicCovers = false;
   bool get isFetchingNewComicCovers => _isFetchingNewComicCovers;
@@ -43,20 +53,28 @@ class HomePageModel extends ChangeNotifier {
     try {
       _newComicCovers = await comicService.fetchNewComicCovers();
     } catch (e) {
-      print(e.runtimeType);
+      print("Loi o _newComicCovers: ${e.runtimeType}");
     }
     setBusyNewComicCovers(false);
   }
 
   Future fetchMaleComicCovers() async {
     setBusyMaleComicCovers(true);
-    _maleComicCovers = await comicService.fetchMaleComicCovers();
+    try {
+      _maleComicCovers = await comicService.fetchMaleComicCovers();
+    } catch (e) {
+      print("Loi o _maleComicCovers: ${e.runtimeType}");
+    }
     setBusyMaleComicCovers(false);
   }
 
   Future fetchFemaleComicCovers() async {
     setBusyFemaleComicCovers(true);
-    _femaleComicCovers = await comicService.fetchFemaleComicCovers();
+    try {
+      _femaleComicCovers = await comicService.fetchFemaleComicCovers();
+    } catch (e) {
+      print("Loi o _femaleComicCovers: ${e.runtimeType}");
+    }
     setBusyFemaleComicCovers(false);
   }
 }
