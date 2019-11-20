@@ -4,8 +4,10 @@ import 'package:uet_comic/src/core/services/connectivity.dart';
 import 'package:uet_comic/src/core/view_models/shared/follow_dao.dart';
 import 'package:uet_comic/src/core/view_models/shared/like_dow.dart';
 import 'package:uet_comic/src/core/view_models/shared/search_dao.dart';
+import 'package:uet_comic/src/core/view_models/views/base.dart';
 import 'package:uet_comic/src/core/view_models/views/comic_detail.dart';
 import 'package:uet_comic/src/core/view_models/views/downloaded.dart';
+import 'package:uet_comic/src/core/view_models/views/filter.dart';
 import 'package:uet_comic/src/core/view_models/views/followed.dart';
 import 'package:uet_comic/src/core/view_models/views/home.dart';
 import 'package:uet_comic/src/core/view_models/views/search_app_bar.dart';
@@ -25,10 +27,16 @@ List<SingleChildCloneableWidget> getProviders(Config config) {
       builder: (context) => SearchDao(),
     ),
     ChangeNotifierProvider(
+      builder: (context) => BasePageModel(),
+    ),
+    ChangeNotifierProvider(
       builder: (context) => SearchAppBarModel(),
     ),
     ChangeNotifierProvider(
       builder: (context) => ComicDetailPageModel(),
+    ),
+    ChangeNotifierProvider(
+      builder: (context) => FilterPageModel(),
     ),
     ChangeNotifierProvider(
       builder: (context) => HomePageModel(),

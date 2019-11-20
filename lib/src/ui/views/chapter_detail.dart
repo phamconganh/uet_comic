@@ -5,6 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:uet_comic/src/core/models/chapter.dart';
 import 'package:uet_comic/src/core/models/comic.dart';
+import 'package:uet_comic/src/core/view_models/views/base.dart';
 import 'package:uet_comic/src/core/view_models/views/chapter_detail.dart';
 
 class ChapterDetailPage extends StatefulWidget {
@@ -35,6 +36,7 @@ class _ChapterDetailPageState extends State<ChapterDetailPage> {
   }
 
   void goHome() {
+    Provider.of<BasePageModel>(context).slideToPage(0);
     Navigator.popUntil(context, ModalRoute.withName('/'));
   }
 
@@ -117,10 +119,10 @@ class _ChapterDetailPageState extends State<ChapterDetailPage> {
                 icon: Icon(Icons.home),
                 onPressed: goHome,
               ),
-              IconButton(
-                icon: Icon(Icons.warning),
-                onPressed: reportChapter,
-              ),
+              // IconButton(
+              //   icon: Icon(Icons.warning),
+              //   onPressed: reportChapter,
+              // ),
               IconButton(
                 icon: Icon(Icons.navigate_before),
                 onPressed:
@@ -148,13 +150,17 @@ class _ChapterDetailPageState extends State<ChapterDetailPage> {
                 icon: Icon(Icons.navigate_next),
                 onPressed: chapterDetailPageModel.isEnd ? null : nextChapter,
               ),
+              // IconButton(
+              //   icon: Icon(FontAwesomeIcons.lightbulb),
+              //   onPressed: changeLight,
+              // ),
+              // IconButton(
+              //   icon: Icon(FontAwesomeIcons.heart),
+              //   onPressed: like,
+              // ),
               IconButton(
-                icon: Icon(FontAwesomeIcons.lightbulb),
-                onPressed: changeLight,
-              ),
-              IconButton(
-                icon: Icon(FontAwesomeIcons.heart),
-                onPressed: like,
+                icon: Icon(Icons.warning),
+                onPressed: reportChapter,
               ),
             ],
           ),

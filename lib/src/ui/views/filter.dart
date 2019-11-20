@@ -1,5 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:uet_comic/src/core/models/type.dart' as prefix0;
+import 'package:provider/provider.dart';
+import 'package:uet_comic/src/core/constants/app_contstants.dart';
+import 'package:uet_comic/src/core/models/type.dart' as uet_comic;
+import 'package:uet_comic/src/core/view_models/shared/follow_dao.dart';
+import 'package:uet_comic/src/core/view_models/shared/like_dow.dart';
+import 'package:uet_comic/src/core/view_models/views/comic_detail.dart';
+import 'package:uet_comic/src/core/view_models/views/filter.dart';
+import 'package:uet_comic/src/ui/views/comic_detail.dart';
+import 'package:uet_comic/src/ui/widgets/comic_cover.dart';
 
 class FilterPage extends StatefulWidget {
   @override
@@ -7,36 +15,197 @@ class FilterPage extends StatefulWidget {
 }
 
 class _FilterPageState extends State<FilterPage> {
-  List<prefix0.Type> types = [prefix0.Type(id: "0", name: "Type 1"), prefix0.Type(id: "1", name: "Type 2333333")];
+  void choosedComic(String idComic, String part) {
+    var model = Provider.of<ComicDetailPageModel>(context);
+    model.onLoadData(idComic);
+    model.setFollow(
+        Provider.of<FollowDao>(context).idFollowedComics.contains(idComic));
+    model
+        .setLike(Provider.of<LikeDao>(context).idLikedComics.contains(idComic));
+
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (BuildContext context) => ComicDetailPage(
+          idComic: idComic,
+          part: part,
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      children: <Widget>[
-        Row(
-          children: <Widget>[
-            Text("Thể loại truyện"),
-            DropdownButton<String>(
-              value: "0",
-              items: List.generate(types.length,
-                  (index) {
-                return DropdownMenuItem(
-                  child: Center(
-                    child:
-                        Text('${types[index].name}'),
+    return SingleChildScrollView(
+      child: Consumer<FilterPageModel>(
+        builder: (_, model, __) {
+          return Column(
+            children: <Widget>[
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 10, left: 10),
+                  child: Table(
+                    defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                    children: [
+                      TableRow(
+                        children: [
+                          Text("Thể loại truyện"),
+                          DropdownButton<String>(
+                            isExpanded: true,
+                            value: model.idType,
+                            items: [
+                              DropdownMenuItem(
+                                child: Text('Không chọn'),
+                                value: null,
+                              ),
+                              ...List.generate(model.types.length, (index) {
+                                return DropdownMenuItem(
+                                  child: Text('${model.types[index].name}'),
+                                  value: model.types[index].id,
+                                );
+                              }),
+                            ],
+                            onChanged: (String value) {
+                              if (value != model.idType) {
+                                model.setIdType(value);
+                              }
+                            },
+                          ),
+                        ],
+                      ),
+                      TableRow(
+                        children: [
+                          Text("Tình trạng"),
+                          DropdownButton<int>(
+                            isExpanded: true,
+                            value: model.state,
+                            items: [
+                              DropdownMenuItem(
+                                child: Text('Không chọn'),
+                                value: null,
+                              ),
+                              ...List.generate(states.length, (index) {
+                                return DropdownMenuItem(
+                                  child: Text('${states[index].value}'),
+                                  value: states[index].key,
+                                );
+                              }),
+                            ],
+                            onChanged: (int value) {
+                              if (value != model.state) {
+                                model.setState(value);
+                              }
+                            },
+                          ),
+                        ],
+                      ),
+                      TableRow(
+                        children: [
+                          Text("Giới tính"),
+                          DropdownButton<int>(
+                            isExpanded: true,
+                            value: model.gender,
+                            items: [
+                              DropdownMenuItem(
+                                child: Text('Không chọn'),
+                                value: null,
+                              ),
+                              ...List.generate(genders.length, (index) {
+                                return DropdownMenuItem(
+                                  child: Text('${genders[index].value}'),
+                                  value: genders[index].key,
+                                );
+                              })
+                            ],
+                            onChanged: (int value) {
+                              if (value != model.gender) {
+                                model.setGender(value);
+                              }
+                            },
+                          ),
+                        ],
+                      ),
+                      TableRow(
+                        children: [
+                          Text("Độ tuổi"),
+                          DropdownButton<Age>(
+                            isExpanded: true,
+                            value: model.age,
+                            items: [
+                              DropdownMenuItem(
+                                child: Text('Không chọn'),
+                                value: null,
+                              ),
+                              ...List.generate(ages.length, (index) {
+                                return DropdownMenuItem(
+                                  child: Text('${ages[index].value}'),
+                                  value: ages[index].key,
+                                );
+                              }),
+                            ],
+                            onChanged: (Age value) {
+                              if (value != model.age) {
+                                model.setAge(value);
+                              }
+                            },
+                          ),
+                        ],
+                      ),
+                      TableRow(
+                        children: [
+                          Text("Sắp xếp"),
+                          DropdownButton<Sort>(
+                            isExpanded: true,
+                            value: model.sort,
+                            items: [
+                              DropdownMenuItem(
+                                child: Text('Không chọn'),
+                                value: null,
+                              ),
+                              ...List.generate(sorts.length, (index) {
+                                return DropdownMenuItem(
+                                  child: Text('${sorts[index].value}'),
+                                  value: sorts[index].key,
+                                );
+                              }),
+                            ],
+                            onChanged: (Sort value) {
+                              if (value != model.sort) {
+                                model.setSort(value);
+                              }
+                            },
+                          ),
+                        ],
+                      ),
+                      TableRow(
+                        children: [
+                          FlatButton(
+                            child: Text('Clear'),
+                            onPressed: model.clear,
+                          ),
+                          FlatButton(
+                            child: Text('Filter'),
+                            onPressed: model.fetchFilter,
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                  value: types[index].id,
-                );
-              }),
-              onChanged: (String value) {
-                // if (value != chapterDetailPageModel.index) {
-                //   chapterDetailPageModel.setIndex(value);
-                // }
-              },
-            ),
-          ],
-        )
-      ],
+                ),
+              ),
+              model.comicCovers.isNotEmpty ? Divider() : Container(),
+              model.busy
+                  ? Center(
+                      child: LinearProgressIndicator(),
+                    )
+                  : ComicCoverList(
+                      comicCovers: model.comicCovers,
+                      choosedComic: choosedComic,
+                      part: "filter_page",
+                    ),
+            ],
+          );
+        },
+      ),
     );
   }
 }

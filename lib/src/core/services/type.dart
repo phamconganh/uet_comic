@@ -12,4 +12,9 @@ class TypeService {
     DocumentSnapshot documentSnapshot = await ref.document(id).get();
     return comic_type.Type.fromMap(documentSnapshot.data);
   }
+
+  Future<List<comic_type.Type>> fetchTypes() async {
+    QuerySnapshot querySnapshot = await ref.getDocuments();
+    return querySnapshot.documents.map((e)=> comic_type.Type.fromMap(e.data)).toList();
+  }
 }

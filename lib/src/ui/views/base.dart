@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
+import 'package:uet_comic/src/core/view_models/views/base.dart';
 import 'package:uet_comic/src/ui/views/downloaded.dart';
 import 'package:uet_comic/src/ui/views/filter.dart';
 import 'package:uet_comic/src/ui/views/followed.dart';
@@ -17,9 +19,7 @@ class BasePage extends StatefulWidget {
 }
 
 class _BasePageState extends State<BasePage> {
-  int _selectedIndex = 0;
 
-  final pageController = PageController();
   final bodyList = <Widget>[
     HomePage(),
     FilterPage(),
@@ -52,12 +52,6 @@ class _BasePageState extends State<BasePage> {
 
   SearchAppBarDelegate _searchDelegate = SearchAppBarDelegate();
 
-  void onPageChanged(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
   void showSettingPage() {
     Navigator.of(context).push(
       MaterialPageRoute(
@@ -68,48 +62,50 @@ class _BasePageState extends State<BasePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: Text(widget.title),
-        actions: <Widget>[
-          IconButton(
-            tooltip: 'Search',
-            icon: Icon(
-              Icons.search,
-            ),
-            onPressed: () {
-              showSearch(
-                context: context,
-                delegate: _searchDelegate,
-              );
+    return Consumer<BasePageModel>(
+      builder: (_, model, __) {
+        return Scaffold(
+          appBar: AppBar(
+            automaticallyImplyLeading: false,
+            title: Text(widget.title),
+            actions: <Widget>[
+              IconButton(
+                tooltip: 'Search',
+                icon: Icon(
+                  Icons.search,
+                ),
+                onPressed: () {
+                  showSearch(
+                    context: context,
+                    delegate: _searchDelegate,
+                  );
+                },
+              ),
+              IconButton(
+                tooltip: 'Account and Settings',
+                icon: Icon(
+                  Icons.account_circle,
+                ),
+                onPressed: showSettingPage,
+              ),
+            ],
+          ),
+          body: PageView(
+            controller: model.pageController,
+            onPageChanged: (int index) {
+              model.setSelectedIndex(index);
             },
+            children: bodyList,
+            physics: ClampingScrollPhysics(),
           ),
-          IconButton(
-            tooltip: 'Account and Settings',
-            icon: Icon(
-              Icons.account_circle,
-            ),
-            onPressed: showSettingPage,
+          bottomNavigationBar: BottomNavyBar(
+            selectedIndex: model.selectedIndex,
+            showElevation: true, // use this to remove appBar's elevation
+            onItemSelected: model.slideToPage,
+            items: items,
           ),
-        ],
-      ),
-      body: PageView(
-        controller: pageController,
-        onPageChanged: onPageChanged,
-        children: bodyList,
-        physics: ClampingScrollPhysics(),
-      ),
-      bottomNavigationBar: BottomNavyBar(
-        selectedIndex: _selectedIndex,
-        showElevation: true, // use this to remove appBar's elevation
-        onItemSelected: (index) => setState(() {
-          _selectedIndex = index;
-          pageController.animateToPage(index,
-              duration: Duration(milliseconds: 300), curve: Curves.ease);
-        }),
-        items: items,
-      ),
+        );
+      },
     );
   }
 }

@@ -2,17 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:uet_comic/src/core/models/chapter.dart';
 import 'package:uet_comic/src/core/models/comic.dart';
 import 'package:uet_comic/src/core/models/comic_cover.dart';
-import 'package:uet_comic/src/core/services/author.dart';
 import 'package:uet_comic/src/core/services/chapter.dart';
 import 'package:uet_comic/src/core/services/comic.dart';
-import 'package:uet_comic/src/core/services/type.dart';
 
 class ComicDetailPageModel extends ChangeNotifier {
-  ComicService comicService = ComicService();
-  ChapterService chapterService = ChapterService();
-  TypeService typeService = TypeService();
-  AuthorService authorService = AuthorService();
-
   bool _isFollowed = false;
   bool get isFollowed => _isFollowed;
   void setFollow(bool value) {
@@ -69,7 +62,9 @@ class ComicDetailPageModel extends ChangeNotifier {
   Future fetchComicDetail(String idComic) async {
     setBusyComicDetail(true);
     try {
-      _comicDetail = await comicService.fetchComicById(idComic);
+      _comicDetail = await ComicService.instance.fetchComicById(idComic);
+      if (_comicDetail.like == 0 && _isLiked == true) _isLiked = false;
+      if (_comicDetail.follow == 0 && _isFollowed == true) _isFollowed = false;
     } catch (e) {
       print("Error fetchComicDetail: ${e.toString()}");
     }
@@ -78,7 +73,7 @@ class ComicDetailPageModel extends ChangeNotifier {
 
   Future fetchChapters(String idComic) async {
     setBusyChapters(true);
-    _chapters = await chapterService.fetchChaptersByIdComic(idComic);
+    _chapters = await ChapterService.instance.fetchChaptersByIdComic(idComic);
     setBusyChapters(false);
   }
 
@@ -97,5 +92,45 @@ class ComicDetailPageModel extends ChangeNotifier {
       );
     }
     setBusySameComics(false);
+  }
+
+  void like() {
+    if (_comicDetail != null) {
+      ComicService.instance.likeComic(_comicDetail.id);
+      _comicDetail.like++;
+      setLike(true);
+    }
+  }
+
+  void dislike() {
+    if (_comicDetail != null) {
+      ComicService.instance.dislikeComic(_comicDetail.id);
+      if (_comicDetail.like > 0) _comicDetail.like--;
+      setLike(false);
+    }
+  }
+
+  void follow() {
+    if (_comicDetail != null) {
+      ComicService.instance.folloComic(_comicDetail.id);
+      _comicDetail.follow++;
+      setFollow(true);
+    }
+  }
+
+  void unfollow() {
+    if (_comicDetail != null) {
+      ComicService.instance.unfolloComic(_comicDetail.id);
+      if (_comicDetail.follow > 0) _comicDetail.follow--;
+      setFollow(false);
+    }
+  }
+
+  void read() {
+    if (_comicDetail != null) {
+      ComicService.instance.viewComic(_comicDetail.id);
+      _comicDetail.view++;
+      notifyListeners();
+    }
   }
 }

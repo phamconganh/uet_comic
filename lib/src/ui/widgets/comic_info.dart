@@ -2,6 +2,7 @@ import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:uet_comic/src/core/constants/app_contstants.dart';
 import 'package:uet_comic/src/core/models/comic.dart';
 import 'package:uet_comic/src/ui/shared/type_def.dart';
 import 'package:uet_comic/src/ui/widgets/type.dart';
@@ -26,7 +27,7 @@ class ComicInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String state = comic.state == 0 ? "Chưa hoàn thành" : "Đã hoàn thành";
+    String state = states.firstWhere((e) => e.key == comic.state).value;
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: Column(

@@ -17,23 +17,24 @@ class Comic {
   final DateTime lastUpdate;
   Author author;
   List<comic_type.Type> types;
+  List<String> idTypes;
 
-  Comic({
-    this.id,
-    this.name,
-    this.imageLink,
-    this.state,
-    this.content,
-    this.view,
-    this.like,
-    this.follow,
-    this.lastChapter,
-    this.age,
-    this.gender,
-    this.lastUpdate,
-    this.author,
-    this.types,
-  });
+  Comic(
+      {this.id,
+      this.name,
+      this.imageLink,
+      this.state,
+      this.content,
+      this.view,
+      this.like,
+      this.follow,
+      this.lastChapter,
+      this.age,
+      this.gender,
+      this.lastUpdate,
+      this.author,
+      this.types,
+      this.idTypes});
 
   factory Comic.fromMap(Map<String, dynamic> map) => Comic(
         id: map['id'] as String,
@@ -53,6 +54,7 @@ class Comic {
         types: (map['types'] as List)
             ?.map((e) => comic_type.Type.fromMap(e))
             ?.toList(),
+        idTypes: (map['idTypes'] as List)?.map((e) => e.toString())?.toList(),
       );
 
   Map<String, dynamic> toMap() => <String, dynamic>{
@@ -70,5 +72,6 @@ class Comic {
         'lastUpdate': lastUpdate,
         'author': author.toMap(),
         'types': types.map((e) => e.toMap()),
+        'idTypes': idTypes,
       };
 }

@@ -39,6 +39,7 @@ class SearchAppBarDelegate extends SearchDelegate<String> {
   @override
   Widget buildResults(BuildContext context) {
     print(query);
+    // can chinh lai provider
     return FutureBuilder<List<ComicCover>>(
       future: ComicService.instance.fetchComicCoversByName(query.toLowerCase()),
       builder:
@@ -63,28 +64,35 @@ class SearchAppBarDelegate extends SearchDelegate<String> {
             return ListView(
               children: <Widget>[
                 const Divider(),
-                ComicCoverList(
-                  comicCovers: snapshot.data,
-                  choosedComic: (String idComic, String part) {
-                    var model = Provider.of<ComicDetailPageModel>(context);
-                    model.onLoadData(idComic);
-                    model.setFollow(Provider.of<FollowDao>(context)
-                        .idFollowedComics
-                        .contains(idComic));
-                    model.setLike(Provider.of<LikeDao>(context)
-                        .idLikedComics
-                        .contains(idComic));
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (BuildContext context) => ComicDetailPage(
-                          idComic: idComic,
-                          part: part,
-                        ),
+                snapshot.data.isNotEmpty
+                    ? ComicCoverList(
+                        comicCovers: snapshot.data,
+                        choosedComic: (String idComic, String part) {
+                          var model =
+                              Provider.of<ComicDetailPageModel>(context);
+                          model.onLoadData(idComic);
+                          model.setFollow(Provider.of<FollowDao>(context)
+                              .idFollowedComics
+                              .contains(idComic));
+                          model.setLike(Provider.of<LikeDao>(context)
+                              .idLikedComics
+                              .contains(idComic));
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                                  ComicDetailPage(
+                                idComic: idComic,
+                                part: part,
+                              ),
+                            ),
+                          );
+                        },
+                        part: "searh_app_bar",
+                      )
+                    : ListTile(
+                        leading: Icon(Icons.search),
+                        title: Text('Không tìm thấy truyện'),
                       ),
-                    );
-                  },
-                  part: "searh_app_bar",
-                ),
               ],
             );
         }

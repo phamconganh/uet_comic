@@ -5,7 +5,9 @@ import 'package:provider/provider.dart';
 import 'package:uet_comic/src/core/models/chapter.dart';
 import 'package:uet_comic/src/core/view_models/shared/follow_dao.dart';
 import 'package:uet_comic/src/core/view_models/shared/like_dow.dart';
+import 'package:uet_comic/src/core/view_models/views/base.dart';
 import 'package:uet_comic/src/core/view_models/views/comic_detail.dart';
+import 'package:uet_comic/src/core/view_models/views/filter.dart';
 import 'package:uet_comic/src/ui/shared/theme.dart';
 import 'package:uet_comic/src/ui/views/chapter_detail.dart';
 import 'package:uet_comic/src/ui/widgets/card_image.dart';
@@ -64,25 +66,26 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
         ),
       );
     }
+    model.read();
   }
 
   void follow() {
-    model.setFollow(true);
+    model.follow();
     followDao.add(model.comicDetail.id);
   }
 
   void unFollow() {
-    model.setFollow(false);
+    model.unfollow();
     followDao.remove(model.comicDetail.id);
   }
 
   void like() {
-    model.setLike(true);
+    model.like();
     likeDao.add(model.comicDetail.id);
   }
 
-  void unLike() {
-    model.setLike(false);
+  void dislike() {
+    model.dislike();
     likeDao.remove(model.comicDetail.id);
   }
 
@@ -91,7 +94,12 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
   }
 
   void onFindComicByType(String idType) {
-    print("onFindComicByType comic id ${widget.idComic}");
+    FilterPageModel filterPageModel = Provider.of(context);
+    filterPageModel.clear();
+    filterPageModel.setIdType(idType);
+    filterPageModel.fetchFilter();
+    Provider.of<BasePageModel>(context).slideToPage(1);
+    Navigator.popUntil(context, ModalRoute.withName('/'));
   }
 
   Future<void> downloadAllChapter() {
@@ -307,7 +315,7 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
             "Bỏ thích",
             overflow: TextOverflow.ellipsis,
           ),
-          onPressed: unLike,
+          onPressed: dislike,
           shape: boderButton,
         );
 
@@ -362,7 +370,7 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
               heightSpace,
               TypeList(
                 types: model.comicDetail.types,
-                findComicByType: null,
+                findComicByType: onFindComicByType,
               ),
               ExpandablePanel(
                 header: const Text(

@@ -9,9 +9,9 @@ class HomePageModel extends ChangeNotifier {
 
   Future<void> onLoadData() async {
     print("onLoadData");
-    // fetchNewComicCovers();
-    // fetchMaleComicCovers();
-    // fetchFemaleComicCovers();
+    fetchNewComicCovers();
+    fetchMaleComicCovers();
+    fetchFemaleComicCovers();
     return;
   }
 
