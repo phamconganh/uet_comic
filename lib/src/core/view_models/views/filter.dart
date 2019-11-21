@@ -23,13 +23,6 @@ class FilterPageModel extends ChangeNotifier {
     _types = types;
   }
 
-  // uet_comic.Type _type;
-  // uet_comic.Type get type => _type;
-  // void setType(uet_comic.Type value) {
-  //   _type = value;
-  //   notifyListeners();
-  // }
-
   String _idType;
   String get idType => _idType;
   void setIdType(String value) {

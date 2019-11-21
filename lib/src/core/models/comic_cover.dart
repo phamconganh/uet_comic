@@ -5,7 +5,7 @@ class ComicCover {
   final String name;
   final String lastChapter;
   final DateTime lastUpdate;
-  final String imageLink;
+  String imageLink;
 
   ComicCover(
       {this.id, this.name, this.lastChapter, this.lastUpdate, this.imageLink});
@@ -14,8 +14,9 @@ class ComicCover {
         id: map['id'] as String,
         name: map['name'] as String,
         lastChapter: map['lastChapter'] as String,
-        lastUpdate: DateTime.parse(
-            (map['lastUpdate'] as Timestamp).toDate().toString()),
+        lastUpdate: DateTime.parse(map['lastUpdate'].runtimeType == Timestamp
+            ? map['lastUpdate'].toDate().toString()
+            : map['lastUpdate'].toString()),
         imageLink: map['imageLink'] as String,
       );
 }

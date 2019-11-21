@@ -1,7 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_mailer/flutter_mailer.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:uet_comic/src/core/models/chapter.dart';
 import 'package:uet_comic/src/core/models/comic.dart';
@@ -12,13 +13,15 @@ class ChapterDetailPage extends StatefulWidget {
   final List<Chapter> chapters;
   final int indexChapter;
   final Comic comic;
+  final bool isDownloaded;
 
-  ChapterDetailPage(
-      {Key key,
-      @required this.chapters,
-      @required this.indexChapter,
-      this.comic})
-      : super(key: key);
+  ChapterDetailPage({
+    Key key,
+    @required this.chapters,
+    @required this.indexChapter,
+    this.comic,
+    this.isDownloaded,
+  }) : super(key: key);
 
   @override
   _ChapterDetailPageState createState() => _ChapterDetailPageState();
@@ -84,11 +87,13 @@ class _ChapterDetailPageState extends State<ChapterDetailPage> {
                 model.chapter.images.length,
                 (index) {
                   return Padding(
-                    child: FadeInImage.assetNetwork(
-                      image: model.chapter.images[index],
-                      placeholder: 'assets/loading.jpg',
-                      fit: BoxFit.fill,
-                    ),
+                    child: widget.isDownloaded == true
+                        ? Image.file(File(model.chapter.images[index]))
+                        : FadeInImage.assetNetwork(
+                            image: model.chapter.images[index],
+                            placeholder: 'assets/loading.jpg',
+                            fit: BoxFit.fill,
+                          ),
                     padding: const EdgeInsets.only(
                       left: 5.0,
                       right: 5.0,
@@ -134,8 +139,8 @@ class _ChapterDetailPageState extends State<ChapterDetailPage> {
                     (index) {
                   return DropdownMenuItem(
                     child: Center(
-                      child:
-                          Text('${chapterDetailPageModel.chapters[index].name}'),
+                      child: Text(
+                          '${chapterDetailPageModel.chapters[index].name}'),
                     ),
                     value: index,
                   );

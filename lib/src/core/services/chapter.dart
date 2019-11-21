@@ -10,7 +10,7 @@ class ChapterService {
 
   Future<List<Chapter>> fetchChaptersByIdComic(String idComic) async {
     QuerySnapshot data =
-        await ref.where("idComic", isEqualTo: idComic).orderBy("index").getDocuments();
+        await ref.where("idComic", isEqualTo: idComic).orderBy("index", descending: true).getDocuments();
     return data.documents.map((doc) => Chapter.fromMap(doc.data)).toList();
   }
 }

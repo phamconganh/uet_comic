@@ -17,7 +17,6 @@ class ChapterList extends StatelessWidget {
       shrinkWrap: true,
       physics: NeverScrollableScrollPhysics(),
       itemCount: chapters.length,
-      reverse: true,
       itemBuilder: (BuildContext context, int index) {
         return InkWell(
           child: ChapterItem(

@@ -1,40 +1,43 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:uet_comic/src/core/models/author.dart';
+import 'package:uet_comic/src/core/models/comic_cover.dart';
 import 'package:uet_comic/src/core/models/type.dart' as comic_type;
 
-class Comic {
-  final String id;
-  final String name;
-  final String imageLink;
+class Comic extends ComicCover {
   final int state;
   final String content;
   int view;
   int like;
   int follow;
-  final String lastChapter;
   final int age;
   final int gender;
-  final DateTime lastUpdate;
   Author author;
   List<comic_type.Type> types;
   List<String> idTypes;
 
-  Comic(
-      {this.id,
-      this.name,
-      this.imageLink,
-      this.state,
-      this.content,
-      this.view,
-      this.like,
-      this.follow,
-      this.lastChapter,
-      this.age,
-      this.gender,
-      this.lastUpdate,
-      this.author,
-      this.types,
-      this.idTypes});
+  Comic({
+    String id,
+    String name,
+    String imageLink,
+    this.state,
+    this.content,
+    this.view,
+    this.like,
+    this.follow,
+    String lastChapter,
+    this.age,
+    this.gender,
+    DateTime lastUpdate,
+    this.author,
+    this.types,
+    this.idTypes,
+  }) : super(
+          id: id,
+          name: name,
+          imageLink: imageLink,
+          lastChapter: lastChapter,
+          lastUpdate: lastUpdate,
+        );
 
   factory Comic.fromMap(Map<String, dynamic> map) => Comic(
         id: map['id'] as String,
@@ -48,8 +51,9 @@ class Comic {
         lastChapter: map['lastChapter'] as String,
         age: map['age'] as int,
         gender: map['gender'] as int,
-        lastUpdate: DateTime.parse(
-            (map['lastUpdate'] as Timestamp).toDate().toString()),
+        lastUpdate: DateTime.parse(map['lastUpdate'].runtimeType == Timestamp
+            ? map['lastUpdate'].toDate().toString()
+            : map['lastUpdate'].toString()),
         author: Author.fromMap(map['author']),
         types: (map['types'] as List)
             ?.map((e) => comic_type.Type.fromMap(e))
@@ -69,7 +73,7 @@ class Comic {
         'lastChapter': lastChapter,
         'age': age,
         'gender': gender,
-        'lastUpdate': lastUpdate,
+        'lastUpdate': lastUpdate.toString(),
         'author': author.toMap(),
         'types': types.map((e) => e.toMap()),
         'idTypes': idTypes,

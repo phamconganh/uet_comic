@@ -7,10 +7,11 @@ import 'package:uet_comic/src/ui/widgets/responsive_grid.dart';
 
 class ComicCoverList extends StatelessWidget {
   final List<ComicCover> comicCovers;
-  final StringPartCallback choosedComic;
+  final ChooseComicCover choosedComic;
+  final bool isDownloaded;
   final String part;
 
-  ComicCoverList({Key key, @required this.comicCovers, @required this.part, this.choosedComic})
+  ComicCoverList({Key key, @required this.comicCovers, @required this.part, this.isDownloaded,this.choosedComic})
       : super(key: key);
 
   @override
@@ -23,11 +24,12 @@ class ComicCoverList extends StatelessWidget {
         (index) => InkWell(
           onTap: () {
             if(choosedComic != null) {
-              choosedComic(comicCovers[index].id, part);
+              choosedComic(comicCovers[index], part);
             }
           },
           child: ComicCoverItem(
             comicCover: comicCovers[index],
+            isDownloaded: isDownloaded,
             part: part,
           ),
         ),
@@ -39,8 +41,9 @@ class ComicCoverList extends StatelessWidget {
 class ComicCoverItem extends StatelessWidget {
   final ComicCover comicCover;
   final String part;
+  final isDownloaded;
 
-  ComicCoverItem({Key key, @required this.comicCover, @required this.part}) : super(key: key);
+  ComicCoverItem({Key key, @required this.comicCover, @required this.part, this.isDownloaded}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -50,10 +53,11 @@ class ComicCoverItem extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
         Hero(
-          tag: comicCover.id + part,
+          tag: comicCover.id + "_" + part,
           child:
           CardImage(
             imageLink: comicCover.imageLink,
+            isDownloaded: isDownloaded,
           ),
         ),
         Text(

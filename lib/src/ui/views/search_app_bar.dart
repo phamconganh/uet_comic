@@ -67,21 +67,20 @@ class SearchAppBarDelegate extends SearchDelegate<String> {
                 snapshot.data.isNotEmpty
                     ? ComicCoverList(
                         comicCovers: snapshot.data,
-                        choosedComic: (String idComic, String part) {
+                        choosedComic: (ComicCover comicCover, String part) {
                           var model =
                               Provider.of<ComicDetailPageModel>(context);
-                          model.onLoadData(idComic);
+                          model.onLoadData(comicCover.id);
                           model.setFollow(Provider.of<FollowDao>(context)
                               .idFollowedComics
-                              .contains(idComic));
+                              .contains(comicCover.id));
                           model.setLike(Provider.of<LikeDao>(context)
                               .idLikedComics
-                              .contains(idComic));
+                              .contains(comicCover.id));
                           Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (BuildContext context) =>
                                   ComicDetailPage(
-                                idComic: idComic,
                                 part: part,
                               ),
                             ),

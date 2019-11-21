@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:uet_comic/src/core/models/chapter.dart';
+import 'package:uet_comic/src/core/services/local_file.dart';
+import 'package:uet_comic/src/core/view_models/shared/comic_dao.dart';
 import 'package:uet_comic/src/core/view_models/shared/follow_dao.dart';
 import 'package:uet_comic/src/core/view_models/shared/like_dow.dart';
 import 'package:uet_comic/src/core/view_models/views/base.dart';
@@ -10,17 +12,16 @@ import 'package:uet_comic/src/core/view_models/views/comic_detail.dart';
 import 'package:uet_comic/src/core/view_models/views/filter.dart';
 import 'package:uet_comic/src/ui/shared/theme.dart';
 import 'package:uet_comic/src/ui/views/chapter_detail.dart';
+import 'package:uet_comic/src/ui/widgets/alert.dart';
 import 'package:uet_comic/src/ui/widgets/card_image.dart';
 import 'package:uet_comic/src/ui/widgets/chapter.dart';
 import 'package:uet_comic/src/ui/widgets/responsive_grid.dart';
 import 'package:uet_comic/src/ui/widgets/type.dart';
 
 class ComicDetailPage extends StatefulWidget {
-  final String idComic;
   final String part;
 
-  ComicDetailPage({Key key, @required this.idComic, @required this.part})
-      : super(key: key);
+  ComicDetailPage({Key key, @required this.part}) : super(key: key);
 
   @override
   _ComicDetailPageState createState() => _ComicDetailPageState();
@@ -31,18 +32,6 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
   FollowDao followDao;
   LikeDao likeDao;
 
-  void choosedComic(String data, String part) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (BuildContext context) => ComicDetailPage(
-          // idComic: idComic,
-          idComic: "99",
-          part: part,
-        ),
-      ),
-    );
-  }
-
   void onReadIndexChapter(List<Chapter> chapters, int index) {
     if (chapters.length == 0) return;
     if (index != null) {
@@ -51,7 +40,8 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
           builder: (BuildContext context) => ChapterDetailPage(
             indexChapter: index,
             chapters: chapters,
-            // comic: model.comicDetail,
+            comic: model.comicDetail,
+            isDownloaded: model.isDownloaded,
           ),
         ),
       );
@@ -61,7 +51,8 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
           builder: (BuildContext context) => ChapterDetailPage(
             indexChapter: 0,
             chapters: chapters,
-            // comic: model.comicDetail,
+            comic: model.comicDetail,
+            isDownloaded: model.isDownloaded,
           ),
         ),
       );
@@ -90,7 +81,7 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
   }
 
   void onLoadMoreChapter() {
-    print("onLoadMoreChapter comic id ${widget.idComic}");
+    // print("onLoadMoreChapter comic id ${widget.idComic}");
   }
 
   void onFindComicByType(String idType) {
@@ -102,36 +93,26 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
     Navigator.popUntil(context, ModalRoute.withName('/'));
   }
 
-  Future<void> downloadAllChapter() {
-    return showDialog<void>(
+  Future<void> downloadAllChapter() async {
+    bool confirm = await showDialog<bool>(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Tải tất cả chương trong truyện'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text('Bạn muốn tải tất cả các chương trong truyện?'),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            FlatButton(
-              child: Text('Hủy'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            FlatButton(
-              child: Text('Tải'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
+        return Confirm(
+          header: 'Tải tất cả chương trong truyện',
+          message: 'Bạn muốn tải tất cả các chương trong truyện?',
+          okText: 'Tải',
+          cancelText: 'Hủy',
         );
       },
     );
+    if (confirm) {
+      String imageLink = await LocalFileService.instance
+          .saveImage(model.comicDetail.imageLink);
+      model.comicDetail.imageLink = imageLink;
+      model.setDownloaded(true);
+      ComicDao comicDao = Provider.of(context);
+      comicDao.add(model.comicDetail);
+    }
   }
 
   @override
@@ -155,6 +136,9 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
             return Column(
               children: <Widget>[
                 const Divider(),
+                Center(
+                          child: CircularProgressIndicator(semanticsValue: "0.8",),
+                        ),
                 Container(
                   child: model.isFetchingComicDetail
                       ? Center(
@@ -170,9 +154,10 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
                               xl: 3,
                               child: Center(
                                 child: Hero(
-                                  tag: widget.idComic + widget.part,
+                                  tag: model.comicDetail.id + "_" + widget.part,
                                   child: CardImage(
                                     imageLink: model.comicDetail.imageLink,
+                                    isDownloaded: model.isDownloaded,
                                   ),
                                 ),
                               ),
@@ -202,33 +187,6 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
                           },
                         ),
                 ),
-                // RaisedButton(
-                //   onPressed: () {},
-                //   child: Text('Load more'),
-                // ),
-                // const Divider(),
-                // const ListTile(
-                //   leading: const Icon(
-                //     Icons.featured_play_list,
-                //     color: Colors.purple,
-                //   ),
-                //   title: const Text(
-                //     "Cùng thể loại",
-                //     style: TextStyle(color: Colors.purple),
-                //     overflow: TextOverflow.ellipsis,
-                //   ),
-                // ),
-                // Container(
-                //   child: model.isFetchingSameComics
-                //       ? Center(
-                //           child: CircularProgressIndicator(),
-                //         )
-                //       : ComicCoverList(
-                //           comicCovers: model.sameComics,
-                //           choosedComic: choosedComic,
-                //           part: widget.part,
-                //         ),
-                // ),
                 heightPadding,
               ],
             );
@@ -252,10 +210,12 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
             style: TextStyle(color: Colors.orange),
             overflow: TextOverflow.ellipsis,
           ),
-          IconButton(
-            icon: const Icon(Icons.cloud_download),
-            onPressed: downloadAllChapter,
-          )
+          model.isDownloaded
+              ? Container()
+              : IconButton(
+                  icon: const Icon(Icons.cloud_download),
+                  onPressed: downloadAllChapter,
+                )
         ],
       ),
     );

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:uet_comic/src/core/constants/app_contstants.dart';
-import 'package:uet_comic/src/core/models/type.dart' as uet_comic;
+import 'package:uet_comic/src/core/models/comic_cover.dart';
 import 'package:uet_comic/src/core/view_models/shared/follow_dao.dart';
 import 'package:uet_comic/src/core/view_models/shared/like_dow.dart';
 import 'package:uet_comic/src/core/view_models/views/comic_detail.dart';
@@ -15,18 +15,17 @@ class FilterPage extends StatefulWidget {
 }
 
 class _FilterPageState extends State<FilterPage> {
-  void choosedComic(String idComic, String part) {
+  void choosedComic(ComicCover comicCover, String part) {
     var model = Provider.of<ComicDetailPageModel>(context);
-    model.onLoadData(idComic);
+    model.onLoadData(comicCover.id);
     model.setFollow(
-        Provider.of<FollowDao>(context).idFollowedComics.contains(idComic));
+        Provider.of<FollowDao>(context).idFollowedComics.contains(comicCover.id));
     model
-        .setLike(Provider.of<LikeDao>(context).idLikedComics.contains(idComic));
+        .setLike(Provider.of<LikeDao>(context).idLikedComics.contains(comicCover.id));
 
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (BuildContext context) => ComicDetailPage(
-          idComic: idComic,
           part: part,
         ),
       ),

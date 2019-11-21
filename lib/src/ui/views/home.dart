@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:uet_comic/src/core/models/comic_cover.dart';
 import 'package:uet_comic/src/core/view_models/shared/follow_dao.dart';
 import 'package:uet_comic/src/core/view_models/shared/like_dow.dart';
 import 'package:uet_comic/src/core/view_models/views/comic_detail.dart';
@@ -16,18 +17,18 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  void choosedComic(String idComic, String part) {
+  void choosedComic(ComicCover comicCover, String part) {
     var model = Provider.of<ComicDetailPageModel>(context);
-    model.onLoadData(idComic);
+    model.onLoadData(comicCover.id);
+    model.setDownloaded(false);
     model.setFollow(
-        Provider.of<FollowDao>(context).idFollowedComics.contains(idComic));
+        Provider.of<FollowDao>(context).idFollowedComics.contains(comicCover.id));
     model
-        .setLike(Provider.of<LikeDao>(context).idLikedComics.contains(idComic));
+        .setLike(Provider.of<LikeDao>(context).idLikedComics.contains(comicCover.id));
 
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (BuildContext context) => ComicDetailPage(
-          idComic: idComic,
           part: part,
         ),
       ),
@@ -61,7 +62,7 @@ class _HomePageState extends State<HomePage> {
                           ComicCoverList(
                             comicCovers: model.newComicCovers,
                             choosedComic: choosedComic,
-                            part: "Truyện mới cập nhật",
+                            part: "home_page",
                           ),
                         ],
                       ),
@@ -88,7 +89,7 @@ class _HomePageState extends State<HomePage> {
                           ComicCoverList(
                             comicCovers: model.maleComicCovers,
                             choosedComic: choosedComic,
-                            part: "Truyện con trai",
+                            part: "man_comic",
                           ),
                         ],
                       ),
@@ -115,7 +116,7 @@ class _HomePageState extends State<HomePage> {
                           ComicCoverList(
                             comicCovers: model.femaleComicCovers,
                             choosedComic: choosedComic,
-                            part: "Truyện con gái",
+                            part: "woman_comic",
                           ),
                         ],
                       ),
