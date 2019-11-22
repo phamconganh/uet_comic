@@ -6,9 +6,15 @@ class Confirm extends StatelessWidget {
   final String okText;
   final String cancelText;
 
-  Confirm({this.header, this.message, this.okText, this.cancelText})
-      : assert(header != null),
-        assert(message != null);
+  Confirm({
+    Key key,
+    @required this.header,
+    @required this.message,
+    this.okText,
+    this.cancelText,
+  })  : assert(header != null),
+        assert(message != null),
+        super(key: key);
 
   @override
   Widget build(BuildContext context) {

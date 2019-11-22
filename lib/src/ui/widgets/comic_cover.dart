@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:uet_comic/src/core/models/comic_cover.dart';
 import 'package:uet_comic/src/ui/shared/type_def.dart';
-import 'package:uet_comic/src/ui/widgets/card_image.dart';
+import 'package:uet_comic/src/ui/widgets/images.dart';
 import 'package:uet_comic/src/ui/widgets/responsive_grid.dart';
 
 class ComicCoverList extends StatelessWidget {
@@ -11,8 +11,15 @@ class ComicCoverList extends StatelessWidget {
   final bool isDownloaded;
   final String part;
 
-  ComicCoverList({Key key, @required this.comicCovers, @required this.part, this.isDownloaded,this.choosedComic})
-      : super(key: key);
+  ComicCoverList({
+    Key key,
+    @required this.comicCovers,
+    @required this.part,
+    this.isDownloaded,
+    this.choosedComic,
+  })  : assert(comicCovers != null),
+        assert(part != null),
+        super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +30,7 @@ class ComicCoverList extends StatelessWidget {
         comicCovers.length,
         (index) => InkWell(
           onTap: () {
-            if(choosedComic != null) {
+            if (choosedComic != null) {
               choosedComic(comicCovers[index], part);
             }
           },
@@ -43,7 +50,14 @@ class ComicCoverItem extends StatelessWidget {
   final String part;
   final isDownloaded;
 
-  ComicCoverItem({Key key, @required this.comicCover, @required this.part, this.isDownloaded}) : super(key: key);
+  ComicCoverItem({
+    Key key,
+    @required this.comicCover,
+    @required this.part,
+    this.isDownloaded,
+  })  : assert(comicCover != null),
+        assert(part != null),
+        super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -52,26 +66,41 @@ class ComicCoverItem extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
-        Hero(
-          tag: comicCover.id + "_" + part,
-          child:
-          CardImage(
-            imageLink: comicCover.imageLink,
-            isDownloaded: isDownloaded,
+        HeroImage(
+          tag: buildTagFromIdAndPart(
+            comicCover.id,
+            part,
           ),
+          imageLink: comicCover.imageLink,
+          isDownloaded: isDownloaded,
         ),
-        Text(
-          comicCover.name,
-          style: theme.textTheme.caption,
-          textAlign: TextAlign.center,
-          overflow: TextOverflow.ellipsis,
-          maxLines: 2,
-        ),
-        Text(
-          "${comicCover.lastChapter}",
-          style: theme.textTheme.caption,
-          overflow: TextOverflow.ellipsis,
-          maxLines: 1,
+        Row(
+          children: <Widget>[
+            Column(
+              children: <Widget>[
+                Text(
+                  comicCover.name,
+                  style: theme.textTheme.caption,
+                  textAlign: TextAlign.center,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
+                ),
+                Text(
+                  "${comicCover.lastChapter}",
+                  style: theme.textTheme.caption,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
+              ],
+            ),
+            IconButton(
+              icon: Icon(
+                Icons.delete_forever,
+                color: Colors.red,
+              ),
+              onPressed: null,
+            ),
+          ],
         ),
       ],
     );

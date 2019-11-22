@@ -7,7 +7,12 @@ class TypeList extends StatelessWidget {
   final List<uet_comic_type.Type> types;
   final StringCallback findComicByType;
 
-  TypeList({Key key, @required this.types, this.findComicByType}) : super(key: key);
+  TypeList({
+    Key key,
+    @required this.types,
+    this.findComicByType,
+  })  : assert(types != null),
+        super(key: key);
 
   @override
   Widget build(BuildContext context) {

@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:uet_comic/src/core/models/comic_cover.dart';
 import 'package:uet_comic/src/core/view_models/shared/comic_dao.dart';
 import 'package:uet_comic/src/core/view_models/views/comic_detail.dart';
+import 'package:uet_comic/src/ui/shared/theme.dart';
 import 'package:uet_comic/src/ui/views/comic_detail.dart';
 import 'package:uet_comic/src/ui/widgets/comic_cover.dart';
 
@@ -64,7 +65,7 @@ class _DownloadedPageState extends State<DownloadedPage> {
                     ),
                   ],
                 ),
-                const Divider(),
+                heightPadding,
               ],
             ),
     );

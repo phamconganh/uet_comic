@@ -8,6 +8,7 @@ import 'package:uet_comic/src/core/models/chapter.dart';
 import 'package:uet_comic/src/core/models/comic.dart';
 import 'package:uet_comic/src/core/view_models/views/base.dart';
 import 'package:uet_comic/src/core/view_models/views/chapter_detail.dart';
+import 'package:uet_comic/src/ui/widgets/images.dart';
 
 class ChapterDetailPage extends StatefulWidget {
   final List<Chapter> chapters;
@@ -87,13 +88,10 @@ class _ChapterDetailPageState extends State<ChapterDetailPage> {
                 model.chapter.images.length,
                 (index) {
                   return Padding(
-                    child: widget.isDownloaded == true
-                        ? Image.file(File(model.chapter.images[index]))
-                        : FadeInImage.assetNetwork(
-                            image: model.chapter.images[index],
-                            placeholder: 'assets/loading.jpg',
-                            fit: BoxFit.fill,
-                          ),
+                    child: SafeImage(
+                      imageLink: model.chapter.images[index],
+                      isDownloaded: widget.isDownloaded,
+                    ),
                     padding: const EdgeInsets.only(
                       left: 5.0,
                       right: 5.0,

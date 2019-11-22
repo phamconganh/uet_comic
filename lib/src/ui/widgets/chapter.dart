@@ -7,8 +7,12 @@ class ChapterList extends StatelessWidget {
   final List<Chapter> chapters;
   final IntCallback onReadIndexChapter;
 
-  ChapterList({Key key, @required this.chapters, this.onReadIndexChapter})
-      : super(key: key);
+  ChapterList({
+    Key key,
+    @required this.chapters,
+    this.onReadIndexChapter,
+  })  : assert(chapters != null),
+        super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +41,11 @@ class ChapterList extends StatelessWidget {
 class ChapterItem extends StatelessWidget {
   final Chapter chapter;
 
-  ChapterItem({Key key, @required this.chapter}) : super(key: key);
+  ChapterItem({
+    Key key,
+    @required this.chapter,
+  })  : assert(chapter != null),
+        super(key: key);
 
   @override
   Widget build(BuildContext context) {

@@ -12,9 +12,9 @@ import 'package:uet_comic/src/core/view_models/views/comic_detail.dart';
 import 'package:uet_comic/src/core/view_models/views/filter.dart';
 import 'package:uet_comic/src/ui/shared/theme.dart';
 import 'package:uet_comic/src/ui/views/chapter_detail.dart';
-import 'package:uet_comic/src/ui/widgets/alert.dart';
-import 'package:uet_comic/src/ui/widgets/card_image.dart';
+import 'package:uet_comic/src/ui/widgets/dialogs.dart';
 import 'package:uet_comic/src/ui/widgets/chapter.dart';
+import 'package:uet_comic/src/ui/widgets/images.dart';
 import 'package:uet_comic/src/ui/widgets/responsive_grid.dart';
 import 'package:uet_comic/src/ui/widgets/type.dart';
 
@@ -137,8 +137,10 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
               children: <Widget>[
                 const Divider(),
                 Center(
-                          child: CircularProgressIndicator(semanticsValue: "0.8",),
-                        ),
+                  child: CircularProgressIndicator(
+                    semanticsValue: "0.8",
+                  ),
+                ),
                 Container(
                   child: model.isFetchingComicDetail
                       ? Center(
@@ -153,12 +155,13 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
                               lg: 3,
                               xl: 3,
                               child: Center(
-                                child: Hero(
-                                  tag: model.comicDetail.id + "_" + widget.part,
-                                  child: CardImage(
-                                    imageLink: model.comicDetail.imageLink,
-                                    isDownloaded: model.isDownloaded,
+                                child: HeroImage(
+                                  tag: buildTagFromIdAndPart(
+                                    model.comicDetail.id,
+                                    widget.part,
                                   ),
+                                  imageLink: model.comicDetail.imageLink,
+                                  isDownloaded: model.isDownloaded,
                                 ),
                               ),
                             ),
