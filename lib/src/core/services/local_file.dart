@@ -33,9 +33,9 @@ class LocalFileService {
   }
 
   Future saveImages(List<String> urls) async {
-    // for (var i = 0; i < urls.length; i++) {
-    //   var path = await _localPath;
-    // }
+    for (var i = 0; i < urls.length; i++) {
+      var path = await _localPath;
+    }
   }
 
   Stream<Io.File> saveImageStream(String url, String path) async* {

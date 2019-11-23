@@ -5,11 +5,24 @@ import 'package:uet_comic/src/core/services/chapter.dart';
 import 'package:uet_comic/src/core/services/comic.dart';
 
 class ComicDetailPageModel extends ChangeNotifier {
+  bool _busy = false;
+  bool get busy => _busy;
+  void setBusy(bool value) {
+    _busy = value;
+    notifyListeners();
+  }
 
   bool _isDownloaded = false;
   bool get isDownloaded => _isDownloaded;
   void setDownloaded(bool value) {
     _isDownloaded = value;
+    notifyListeners();
+  }
+
+  bool _isDownloading = false;
+  bool get isDownloading => _isDownloading;
+  void setIsDownloading(bool value) {
+    _isDownloading = value;
     notifyListeners();
   }
 
@@ -29,18 +42,32 @@ class ComicDetailPageModel extends ChangeNotifier {
 
   Future<void> onLoadData(idComic) async {
     if (idComic != null) {
-      fetchComicDetail(idComic);
-      fetchChapters(idComic);
+      fetchComic(idComic);
+      // fetchComicDetail(idComic);
+      // fetchChapters(idComic);
     }
     return;
   }
 
-  bool _isFetchingComicDetail = false;
-  bool get isFetchingComicDetail => _isFetchingComicDetail;
-  void setBusyComicDetail(bool value) {
-    _isFetchingComicDetail = value;
-    notifyListeners();
+  Future fetchComic(String idComic) async {
+    setBusy(true);
+    try {
+      _comicDetail = await ComicService.instance.fetchComicById(idComic);
+      if (_comicDetail.like == 0 && _isLiked == true) _isLiked = false;
+      if (_comicDetail.follow == 0 && _isFollowed == true) _isFollowed = false;
+      _chapters = await ChapterService.instance.fetchChaptersByIdComic(idComic);
+    } catch (e) {
+      print("Error fetchComicDetail: ${e.toString()}");
+    }
+    setBusy(false);
   }
+
+  // bool _isFetchingComicDetail = false;
+  // bool get isFetchingComicDetail => _isFetchingComicDetail;
+  // void setBusyComicDetail(bool value) {
+  //   _isFetchingComicDetail = value;
+  //   notifyListeners();
+  // }
 
   Comic _comicDetail;
   Comic get comicDetail => _comicDetail;
@@ -49,12 +76,12 @@ class ComicDetailPageModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  bool _isFetchingChapters = false;
-  bool get isFetchingChapters => _isFetchingChapters;
-  void setBusyChapters(bool value) {
-    _isFetchingChapters = value;
-    notifyListeners();
-  }
+  // bool _isFetchingChapters = false;
+  // bool get isFetchingChapters => _isFetchingChapters;
+  // void setBusyChapters(bool value) {
+  //   _isFetchingChapters = value;
+  //   notifyListeners();
+  // }
 
   List<Chapter> _chapters = [];
   List<Chapter> get chapters => _chapters;
@@ -63,23 +90,23 @@ class ComicDetailPageModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future fetchComicDetail(String idComic) async {
-    setBusyComicDetail(true);
-    try {
-      _comicDetail = await ComicService.instance.fetchComicById(idComic);
-      if (_comicDetail.like == 0 && _isLiked == true) _isLiked = false;
-      if (_comicDetail.follow == 0 && _isFollowed == true) _isFollowed = false;
-    } catch (e) {
-      print("Error fetchComicDetail: ${e.toString()}");
-    }
-    setBusyComicDetail(false);
-  }
+  // Future fetchComicDetail(String idComic) async {
+  //   setBusyComicDetail(true);
+  //   try {
+  //     _comicDetail = await ComicService.instance.fetchComicById(idComic);
+  //     if (_comicDetail.like == 0 && _isLiked == true) _isLiked = false;
+  //     if (_comicDetail.follow == 0 && _isFollowed == true) _isFollowed = false;
+  //   } catch (e) {
+  //     print("Error fetchComicDetail: ${e.toString()}");
+  //   }
+  //   setBusyComicDetail(false);
+  // }
 
-  Future fetchChapters(String idComic) async {
-    setBusyChapters(true);
-    _chapters = await ChapterService.instance.fetchChaptersByIdComic(idComic);
-    setBusyChapters(false);
-  }
+  // Future fetchChapters(String idComic) async {
+  //   setBusyChapters(true);
+  //   _chapters = await ChapterService.instance.fetchChaptersByIdComic(idComic);
+  //   setBusyChapters(false);
+  // }
 
   void like() {
     if (_comicDetail != null) {
@@ -119,5 +146,17 @@ class ComicDetailPageModel extends ChangeNotifier {
       _comicDetail.view++;
       notifyListeners();
     }
+  }
+
+  void clear() {
+    _isDownloaded = false;
+    _isFollowed = false;
+    _isLiked = false;
+    _isDownloading = false;
+    // _isFetchingComicDetail = false;
+    _comicDetail = null;
+    // _isFetchingChapters = false;
+    _chapters = [];
+    notifyListeners();
   }
 }

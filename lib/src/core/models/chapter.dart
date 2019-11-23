@@ -4,7 +4,7 @@ class Chapter {
   final String id;
   final int index;
   final String name;
-  final List<String> images;
+  List<String> images;
   final String idComic;
   final DateTime lastUpdate;
 
@@ -22,8 +22,9 @@ class Chapter {
         index: map['index'] as int,
         name: map['name']?.toString(),
         idComic: map['idComic']?.toString(),
-        lastUpdate: DateTime.parse(
-            (map['lastUpdate'] as Timestamp).toDate().toString()),
+        lastUpdate: DateTime.parse(map['lastUpdate'].runtimeType == Timestamp
+            ? map['lastUpdate'].toDate().toString()
+            : map['lastUpdate'].toString()),
         images: (map['images'] as List)?.map((e) => e as String)?.toList(),
       );
 

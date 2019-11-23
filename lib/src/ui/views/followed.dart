@@ -16,7 +16,7 @@ class FollowedPage extends StatefulWidget {
 }
 
 class _FollowedPageState extends State<FollowedPage> {
-  void choosedComic(ComicCover comicCover, String part) {
+  void onChoosedComic(ComicCover comicCover, String part) {
     var model = Provider.of<ComicDetailPageModel>(context);
     model.onLoadData(comicCover.id);
     model.setFollow(
@@ -70,7 +70,7 @@ class _FollowedPageState extends State<FollowedPage> {
                       children: <Widget>[
                         ComicCoverList(
                           comicCovers: model.followedComics,
-                          choosedComic: choosedComic,
+                          onChoosedComic: onChoosedComic,
                           part: "followed_page",
                         ),
                       ],

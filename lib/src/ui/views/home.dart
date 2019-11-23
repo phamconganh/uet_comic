@@ -17,8 +17,9 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  void choosedComic(ComicCover comicCover, String part) {
+  void onChoosedComic(ComicCover comicCover, String part) {
     var model = Provider.of<ComicDetailPageModel>(context);
+    model.clear();
     model.onLoadData(comicCover.id);
     model.setDownloaded(false);
     model.setFollow(
@@ -61,7 +62,7 @@ class _HomePageState extends State<HomePage> {
                         children: <Widget>[
                           ComicCoverList(
                             comicCovers: model.newComicCovers,
-                            choosedComic: choosedComic,
+                            onChoosedComic: onChoosedComic,
                             part: "home_page",
                           ),
                         ],
@@ -88,7 +89,7 @@ class _HomePageState extends State<HomePage> {
                         children: <Widget>[
                           ComicCoverList(
                             comicCovers: model.maleComicCovers,
-                            choosedComic: choosedComic,
+                            onChoosedComic: onChoosedComic,
                             part: "man_comic",
                           ),
                         ],
@@ -115,7 +116,7 @@ class _HomePageState extends State<HomePage> {
                         children: <Widget>[
                           ComicCoverList(
                             comicCovers: model.femaleComicCovers,
-                            choosedComic: choosedComic,
+                            onChoosedComic: onChoosedComic,
                             part: "woman_comic",
                           ),
                         ],

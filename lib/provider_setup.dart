@@ -1,6 +1,7 @@
 import 'package:provider/provider.dart';
 import 'package:uet_comic/src/core/models/config.dart';
 import 'package:uet_comic/src/core/services/connectivity.dart';
+import 'package:uet_comic/src/core/view_models/shared/chapter_dao.dart';
 import 'package:uet_comic/src/core/view_models/shared/comic_dao.dart';
 import 'package:uet_comic/src/core/view_models/shared/follow_dao.dart';
 import 'package:uet_comic/src/core/view_models/shared/like_dow.dart';
@@ -19,6 +20,9 @@ List<SingleChildCloneableWidget> getProviders(Config config) {
     ),
     ChangeNotifierProvider(
       builder: (context) => FollowDao(),
+    ),
+    ChangeNotifierProvider(
+      builder: (context) => ChapterDao(),
     ),
     ChangeNotifierProvider(
       builder: (context) => LikeDao(),

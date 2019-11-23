@@ -1,6 +1,7 @@
 // import 'package:cached_network_image/cached_network_image.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:uet_comic/src/core/models/comic_cover.dart';
 
 class SafeImage extends StatelessWidget {
   final String imageLink;
@@ -39,39 +40,48 @@ class SafeImage extends StatelessWidget {
   }
 }
 
-class HeroImage extends StatelessWidget {
-  final String imageLink;
-  final String tag;
+class ComicCoverImage extends StatelessWidget {
+  final ComicCover comicCover;
+  final String part;
   final bool isDownloaded;
 
-  HeroImage({
+  ComicCoverImage({
     Key key,
-    @required this.imageLink,
-    @required this.tag,
+    @required this.comicCover,
+    this.part,
     this.isDownloaded,
-  })  : assert(imageLink != null),
-        assert(tag != null),
+  })  : assert(comicCover != null),
         super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Hero(
-      tag: tag,
+      tag: _buildTagFromIdAndPart(comicCover.id, part),
       child: Card(
         semanticContainer: true,
         clipBehavior: Clip.antiAliasWithSaveLayer,
         child: SafeImage(
-          imageLink: imageLink,
+          imageLink: comicCover.imageLink,
           isDownloaded: isDownloaded,
         ),
         elevation: 5,
       ),
     );
+    // return Card(
+    //   semanticContainer: true,
+    //   clipBehavior: Clip.antiAliasWithSaveLayer,
+    //   child: SafeImage(
+    //     imageLink: comicCover.imageLink,
+    //     isDownloaded: isDownloaded,
+    //   ),
+    //   elevation: 5,
+    // );
   }
-}
 
-String buildTagFromIdAndPart(String id, String part) {
-  if (id == null) id = "id";
-  if (part == null) part = "part";
-  return id + "_" + part;
+  String _buildTagFromIdAndPart(String id, String part) {
+    if (id == null) id = "id";
+    if (part == null) part = "part";
+    String tag = id + "_" + part;
+    return tag;
+  }
 }

@@ -7,17 +7,19 @@ import 'package:uet_comic/src/ui/widgets/responsive_grid.dart';
 
 class ComicCoverList extends StatelessWidget {
   final List<ComicCover> comicCovers;
-  final ChooseComicCover choosedComic;
+  final ChooseComicCoverPart onChoosedComic;
+  final ChooseComicCover onDeleteComic;
   final bool isDownloaded;
   final String part;
 
-  ComicCoverList({
-    Key key,
-    @required this.comicCovers,
-    @required this.part,
-    this.isDownloaded,
-    this.choosedComic,
-  })  : assert(comicCovers != null),
+  ComicCoverList(
+      {Key key,
+      @required this.comicCovers,
+      @required this.part,
+      this.isDownloaded,
+      this.onChoosedComic,
+      this.onDeleteComic})
+      : assert(comicCovers != null),
         assert(part != null),
         super(key: key);
 
@@ -28,15 +30,16 @@ class ComicCoverList extends StatelessWidget {
       minSpacing: 10,
       children: List.generate(
         comicCovers.length,
-        (index) => InkWell(
+        (index) => GestureDetector(
           onTap: () {
-            if (choosedComic != null) {
-              choosedComic(comicCovers[index], part);
+            if (onChoosedComic != null) {
+              onChoosedComic(comicCovers[index], part);
             }
           },
           child: ComicCoverItem(
             comicCover: comicCovers[index],
             isDownloaded: isDownloaded,
+            onDeleteComic: onDeleteComic,
             part: part,
           ),
         ),
@@ -49,12 +52,14 @@ class ComicCoverItem extends StatelessWidget {
   final ComicCover comicCover;
   final String part;
   final isDownloaded;
+  final ChooseComicCover onDeleteComic;
 
   ComicCoverItem({
     Key key,
     @required this.comicCover,
     @required this.part,
     this.isDownloaded,
+    this.onDeleteComic,
   })  : assert(comicCover != null),
         assert(part != null),
         super(key: key);
@@ -66,39 +71,79 @@ class ComicCoverItem extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
-        HeroImage(
-          tag: buildTagFromIdAndPart(
-            comicCover.id,
-            part,
-          ),
-          imageLink: comicCover.imageLink,
-          isDownloaded: isDownloaded,
-        ),
-        Row(
+        Stack(
+          alignment: AlignmentDirectional.topEnd,
           children: <Widget>[
-            Column(
-              children: <Widget>[
-                Text(
-                  comicCover.name,
-                  style: theme.textTheme.caption,
-                  textAlign: TextAlign.center,
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 2,
-                ),
-                Text(
-                  "${comicCover.lastChapter}",
-                  style: theme.textTheme.caption,
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
-                ),
-              ],
+            ComicCoverImage(
+              comicCover: comicCover,
+              part: part,
+              isDownloaded: isDownloaded,
             ),
-            IconButton(
-              icon: Icon(
-                Icons.delete_forever,
-                color: Colors.red,
-              ),
-              onPressed: null,
+            onDeleteComic != null
+                ? Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      // GestureDetector(
+                      //   behavior: HitTestBehavior.opaque,
+                      //   child: SizedBox(
+                      //     child: FloatingActionButton(
+                      //       heroTag:
+                      //           comicCover.id + "_" + part + "_reload_float_action",
+                      //       backgroundColor: Colors.white,
+                      //       elevation: 10,
+                      //       child: Icon(
+                      //         Icons.delete_forever,
+                      //         color: Colors.red,
+                      //       ),
+                      //       onPressed: () {
+                      //         onDeleteComic(comicCover);
+                      //       },
+                      //       tooltip: "Xóa truyện",
+                      //     ),
+                      //     width: 30,
+                      //     height: 30,
+                      //   ),
+                      // ),
+                      GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        child: SizedBox(
+                          child: FloatingActionButton(
+                            heroTag:
+                                comicCover.id + "_" + part + "_delete_float_action",
+                            backgroundColor: Colors.white,
+                            elevation: 10,
+                            child: Icon(
+                              Icons.delete_forever,
+                              color: Colors.red,
+                            ),
+                            onPressed: () {
+                              onDeleteComic(comicCover);
+                            },
+                            tooltip: "Xóa truyện",
+                          ),
+                          width: 30,
+                          height: 30,
+                        ),
+                      ),
+                    ],
+                  )
+                : Container(),
+          ],
+        ),
+        Column(
+          children: <Widget>[
+            Text(
+              comicCover.name,
+              style: theme.textTheme.caption,
+              textAlign: TextAlign.center,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 2,
+            ),
+            Text(
+              "${comicCover.lastChapter}",
+              style: theme.textTheme.caption,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
             ),
           ],
         ),

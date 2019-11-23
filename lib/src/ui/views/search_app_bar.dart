@@ -67,7 +67,7 @@ class SearchAppBarDelegate extends SearchDelegate<String> {
                 snapshot.data.isNotEmpty
                     ? ComicCoverList(
                         comicCovers: snapshot.data,
-                        choosedComic: (ComicCover comicCover, String part) {
+                        onChoosedComic: (ComicCover comicCover, String part) {
                           var model =
                               Provider.of<ComicDetailPageModel>(context);
                           model.onLoadData(comicCover.id);

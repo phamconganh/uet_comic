@@ -15,7 +15,7 @@ class FilterPage extends StatefulWidget {
 }
 
 class _FilterPageState extends State<FilterPage> {
-  void choosedComic(ComicCover comicCover, String part) {
+  void onChoosedComic(ComicCover comicCover, String part) {
     var model = Provider.of<ComicDetailPageModel>(context);
     model.onLoadData(comicCover.id);
     model.setFollow(
@@ -198,7 +198,7 @@ class _FilterPageState extends State<FilterPage> {
                     )
                   : ComicCoverList(
                       comicCovers: model.comicCovers,
-                      choosedComic: choosedComic,
+                      onChoosedComic: onChoosedComic,
                       part: "filter_page",
                     ),
             ],

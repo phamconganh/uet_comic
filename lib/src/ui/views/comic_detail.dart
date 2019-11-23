@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:uet_comic/src/core/models/chapter.dart';
+import 'package:uet_comic/src/core/models/comic.dart';
 import 'package:uet_comic/src/core/services/local_file.dart';
+import 'package:uet_comic/src/core/view_models/shared/chapter_dao.dart';
 import 'package:uet_comic/src/core/view_models/shared/comic_dao.dart';
 import 'package:uet_comic/src/core/view_models/shared/follow_dao.dart';
 import 'package:uet_comic/src/core/view_models/shared/like_dow.dart';
@@ -39,7 +41,7 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
         MaterialPageRoute(
           builder: (BuildContext context) => ChapterDetailPage(
             indexChapter: index,
-            chapters: chapters,
+            chapters: chapters.reversed.toList(),
             comic: model.comicDetail,
             isDownloaded: model.isDownloaded,
           ),
@@ -50,7 +52,7 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
         MaterialPageRoute(
           builder: (BuildContext context) => ChapterDetailPage(
             indexChapter: 0,
-            chapters: chapters,
+            chapters: chapters.reversed.toList(),
             comic: model.comicDetail,
             isDownloaded: model.isDownloaded,
           ),
@@ -105,13 +107,49 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
         );
       },
     );
-    if (confirm) {
-      String imageLink = await LocalFileService.instance
-          .saveImage(model.comicDetail.imageLink);
-      model.comicDetail.imageLink = imageLink;
-      model.setDownloaded(true);
-      ComicDao comicDao = Provider.of(context);
-      comicDao.add(model.comicDetail);
+    if (confirm == true) {
+      try {
+        model.setIsDownloading(true);
+        String imageLink = await LocalFileService.instance
+            .saveImage(model.comicDetail.imageLink);
+
+        Comic downloadedComic = model.comicDetail;
+        downloadedComic.imageLink = imageLink;
+        ComicDao comicDao = Provider.of(context);
+        comicDao.add(model.comicDetail);
+
+        // int total = 0;
+        // for (var i = 0; i < model.chapters.length; i++) {
+        //   total += model.chapters[i].images.length;
+        // }
+
+        ChapterDao chapterDao = Provider.of(context);
+        List<Chapter> downloadedChapters = [];
+        for (var i = 0; i < model.chapters.length; i++) {
+          Chapter chapter = model.chapters[i];
+          Chapter downloadedChapter = Chapter.fromMap(chapter.toMap());
+          downloadedChapter.images = [];
+          for (var j = 0; j < chapter.images.length; i++) {
+            var image = chapter.images[j];
+            try {
+              image = await LocalFileService.instance
+                  .saveImage(model.comicDetail.imageLink);
+              downloadedChapter.images.add(image);
+            } catch (e) {
+              print(e);
+            }
+          }
+          if(downloadedChapter.images.isNotEmpty && chapter.images.isNotEmpty) {
+            chapterDao.add(downloadedChapter);
+            downloadedChapters.add(downloadedChapter);
+          }
+        }
+        model.setChapters(downloadedChapters);
+        model.setIsDownloading(false);
+        model.setDownloaded(true);
+      } catch (e) {
+        print(e);
+      }
     }
   }
 
@@ -130,71 +168,62 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
       appBar: AppBar(
         title: Text("Chi tiết truyện"),
       ),
-      body: SingleChildScrollView(
-        child: Consumer<ComicDetailPageModel>(
-          builder: (_, model, __) {
-            return Column(
-              children: <Widget>[
-                const Divider(),
-                Center(
-                  child: CircularProgressIndicator(
-                    semanticsValue: "0.8",
-                  ),
-                ),
-                Container(
-                  child: model.isFetchingComicDetail
-                      ? Center(
-                          child: CircularProgressIndicator(),
-                        )
-                      : ResponsiveGridRow(
-                          children: [
-                            ResponsiveGridCol(
-                              sm: 12,
-                              xs: 12,
-                              md: 12,
-                              lg: 3,
-                              xl: 3,
-                              child: Center(
-                                child: HeroImage(
-                                  tag: buildTagFromIdAndPart(
-                                    model.comicDetail.id,
-                                    widget.part,
+      body: Consumer<ComicDetailPageModel>(
+        builder: (_, model, __) {
+          return model.busy
+              ? Center(
+                  child: CircularProgressIndicator(),
+                )
+              : SingleChildScrollView(
+                  child: Column(
+                    children: <Widget>[
+                      const Divider(),
+                      model.comicDetail == null
+                          ? Container()
+                          : ResponsiveGridRow(
+                              children: [
+                                ResponsiveGridCol(
+                                  sm: 12,
+                                  xs: 12,
+                                  md: 12,
+                                  lg: 3,
+                                  xl: 3,
+                                  child: Center(
+                                    child: ComicCoverImage(
+                                      comicCover: model.comicDetail,
+                                      part: widget.part,
+                                      isDownloaded: model.isDownloaded,
+                                    ),
                                   ),
-                                  imageLink: model.comicDetail.imageLink,
-                                  isDownloaded: model.isDownloaded,
                                 ),
+                                ResponsiveGridCol(
+                                  sm: 12,
+                                  xs: 12,
+                                  md: 12,
+                                  lg: 9,
+                                  xl: 9,
+                                  child: _buildComicInfo(),
+                                ),
+                              ],
+                            ),
+                      const Divider(),
+                      _buildTitleChapters(),
+                      model.isDownloading ? CircularProgressIndicator() : Container(),
+                      model.chapters.length == 0 && model.chapters == null
+                          ? Container()
+                          : Container(
+                              child: ChapterList(
+                                chapters: model.chapters,
+                                onReadIndexChapter: (index) {
+                                  onReadIndexChapter(model.chapters, index);
+                                },
                               ),
                             ),
-                            ResponsiveGridCol(
-                              sm: 12,
-                              xs: 12,
-                              md: 12,
-                              lg: 9,
-                              xl: 9,
-                              child: _buildComicInfo(),
-                            ),
-                          ],
-                        ),
-                ),
-                const Divider(),
-                _buildTitleChapters(),
-                Container(
-                  child: model.isFetchingChapters
-                      ? Center(
-                          child: CircularProgressIndicator(),
-                        )
-                      : ChapterList(
-                          chapters: model.chapters,
-                          onReadIndexChapter: (index) {
-                            onReadIndexChapter(model.chapters, index);
-                          },
-                        ),
-                ),
-                heightPadding,
-              ],
-            );
-          },
-        ),
+                      heightPadding,
+                    ],
+                  ),
+                );
+        },
       ),
     );
   }
@@ -213,7 +242,7 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
             style: TextStyle(color: Colors.orange),
             overflow: TextOverflow.ellipsis,
           ),
-          model.isDownloaded
+          model.isDownloaded || model.comicDetail == null
               ? Container()
               : IconButton(
                   icon: const Icon(Icons.cloud_download),
