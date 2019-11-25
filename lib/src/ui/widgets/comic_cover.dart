@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:uet_comic/src/core/models/comic_cover.dart';
 import 'package:uet_comic/src/ui/shared/type_def.dart';
 import 'package:uet_comic/src/ui/widgets/images.dart';
@@ -35,6 +36,24 @@ class ComicCoverList extends StatelessWidget {
             if (onChoosedComic != null) {
               onChoosedComic(comicCovers[index], part);
             }
+          },
+          onLongPress: () {
+            // showMenu(
+            //   position: RelativeRect.fromLTRB(10, 10, 10, 10),
+            //   // onSelected: () {},
+            //   items: <PopupMenuEntry>[
+            //     PopupMenuItem(
+            //       value: 0,
+            //       child: Row(
+            //         children: <Widget>[
+            //           Icon(Icons.delete),
+            //           Text("Delete"),
+            //         ],
+            //       ),
+            //     )
+            //   ],
+            //   context: context,
+            // );
           },
           child: ComicCoverItem(
             comicCover: comicCovers[index],
@@ -79,10 +98,73 @@ class ComicCoverItem extends StatelessWidget {
               part: part,
               isDownloaded: isDownloaded,
             ),
+            Positioned.fill(
+              child: Align(
+                alignment: Alignment.center,
+                child: ClipOval(
+                  child: Container(
+                    color: Colors.white,
+                    child: Icon(
+                      Icons.check_circle,
+                      color: Colors.green,
+                    ),
+                  ),
+                ),
+              ),
+            ),
             onDeleteComic != null
                 ? Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[
+                      GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        child: SizedBox(
+                          child: FloatingActionButton(
+                            heroTag: comicCover.id +
+                                "_" +
+                                part +
+                                "_sync_float_action",
+                            backgroundColor: Colors.white,
+                            elevation: 10,
+                            child: Icon(
+                              Icons.sync,
+                              color: Colors.red,
+                            ),
+                            onPressed: () {
+                              onDeleteComic(comicCover);
+                            },
+                            tooltip: "Xóa truyện",
+                          ),
+                          width: 30,
+                          height: 30,
+                        ),
+                      ),
+                      SizedBox(
+                        width: 2,
+                      ),
+                      GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        child: SizedBox(
+                          child: FloatingActionButton(
+                            heroTag: comicCover.id +
+                                "_" +
+                                part +
+                                "_delete_float_action",
+                            backgroundColor: Colors.white,
+                            elevation: 10,
+                            child: Icon(
+                              Icons.delete_forever,
+                              color: Colors.red,
+                            ),
+                            onPressed: () {
+                              onDeleteComic(comicCover);
+                            },
+                            tooltip: "Xóa truyện",
+                          ),
+                          width: 30,
+                          height: 30,
+                        ),
+                      ),
                       // GestureDetector(
                       //   behavior: HitTestBehavior.opaque,
                       //   child: SizedBox(
@@ -104,27 +186,6 @@ class ComicCoverItem extends StatelessWidget {
                       //     height: 30,
                       //   ),
                       // ),
-                      GestureDetector(
-                        behavior: HitTestBehavior.opaque,
-                        child: SizedBox(
-                          child: FloatingActionButton(
-                            heroTag:
-                                comicCover.id + "_" + part + "_delete_float_action",
-                            backgroundColor: Colors.white,
-                            elevation: 10,
-                            child: Icon(
-                              Icons.delete_forever,
-                              color: Colors.red,
-                            ),
-                            onPressed: () {
-                              onDeleteComic(comicCover);
-                            },
-                            tooltip: "Xóa truyện",
-                          ),
-                          width: 30,
-                          height: 30,
-                        ),
-                      ),
                     ],
                   )
                 : Container(),
