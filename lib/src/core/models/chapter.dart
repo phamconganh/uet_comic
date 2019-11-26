@@ -33,7 +33,7 @@ class Chapter {
         'index': index,
         'name': name,
         'idComic': idComic,
-        'lastUpdate': lastUpdate,
+        'lastUpdate': lastUpdate.toString(),
         'images': images,
       };
 }

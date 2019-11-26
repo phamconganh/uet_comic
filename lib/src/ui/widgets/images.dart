@@ -67,15 +67,6 @@ class ComicCoverImage extends StatelessWidget {
         elevation: 5,
       ),
     );
-    // return Card(
-    //   semanticContainer: true,
-    //   clipBehavior: Clip.antiAliasWithSaveLayer,
-    //   child: SafeImage(
-    //     imageLink: comicCover.imageLink,
-    //     isDownloaded: isDownloaded,
-    //   ),
-    //   elevation: 5,
-    // );
   }
 
   String _buildTagFromIdAndPart(String id, String part) {

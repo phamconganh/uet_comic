@@ -6,9 +6,16 @@ class ComicCover {
   final String lastChapter;
   final DateTime lastUpdate;
   String imageLink;
+  bool isInProcess;
 
-  ComicCover(
-      {this.id, this.name, this.lastChapter, this.lastUpdate, this.imageLink});
+  ComicCover({
+    this.id,
+    this.name,
+    this.lastChapter,
+    this.lastUpdate,
+    this.imageLink,
+    this.isInProcess,
+  });
 
   factory ComicCover.fromMap(Map<String, dynamic> map) => ComicCover(
         id: map['id'] as String,
@@ -18,5 +25,15 @@ class ComicCover {
             ? map['lastUpdate'].toDate().toString()
             : map['lastUpdate'].toString()),
         imageLink: map['imageLink'] as String,
+        isInProcess: map['isInProcess'] as bool,
       );
+
+  Map<String, dynamic> toMap() => <String, dynamic>{
+        'id': id,
+        'name': name,
+        'lastChapter': lastChapter,
+        'lastUpdate': lastUpdate.toString(),
+        'imageLink': imageLink,
+        'isInProcess': isInProcess,
+      };
 }

@@ -6,15 +6,10 @@ class SearchService {
   SearchService.internal();
   factory SearchService() => instance;
 
-  final CollectionReference ref = Firestore.instance.collection('search');
-
-  // Future<List<Search>> fetchNameComic(String name) async {
-  //   QuerySnapshot querySnapshot = await ref.where("searchIndexs", arrayContains: name).getDocuments();
-  //   return querySnapshot.documents.map((e) => Search.fromMap(e.data)).toList();
-  // }
+  static final String path = "search";
+  final CollectionReference ref = Firestore.instance.collection(path);
 
   Stream<QuerySnapshot> searchNameComics(String name) {
     return ref.where("searchIndexs", arrayContains: name).snapshots();
   }
-
 }

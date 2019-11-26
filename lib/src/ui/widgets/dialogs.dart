@@ -44,3 +44,47 @@ class Confirm extends StatelessWidget {
     );
   }
 }
+
+class Notify extends StatelessWidget {
+  final String header;
+  final String message;
+  final String okText;
+  final bool isError;
+
+  Notify({
+    Key key,
+    @required this.header,
+    @required this.message,
+    this.okText,
+    this.isError,
+  })  : assert(header != null),
+        assert(message != null),
+        super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: isError == true
+          ? ListTile(
+              leading: Icon(Icons.error),
+              title: Text(header),
+            )
+          : Text(header),
+      content: SingleChildScrollView(
+        child: ListBody(
+          children: <Widget>[
+            Text(message),
+          ],
+        ),
+      ),
+      actions: <Widget>[
+        FlatButton(
+          child: Text(okText != null ? okText : 'Ok'),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+      ],
+    );
+  }
+}

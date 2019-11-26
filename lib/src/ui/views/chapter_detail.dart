@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_mailer/flutter_mailer.dart';
@@ -30,6 +28,7 @@ class ChapterDetailPage extends StatefulWidget {
 
 class _ChapterDetailPageState extends State<ChapterDetailPage> {
   ChapterDetailPageModel chapterDetailPageModel;
+  ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -66,10 +65,12 @@ class _ChapterDetailPageState extends State<ChapterDetailPage> {
   }
 
   void nextChapter() {
+    _scrollController.jumpTo(0);
     chapterDetailPageModel.setIndex(chapterDetailPageModel.index + 1);
   }
 
   void previousChapter() {
+    _scrollController.jumpTo(0);
     chapterDetailPageModel.setIndex(chapterDetailPageModel.index - 1);
   }
 
@@ -84,6 +85,7 @@ class _ChapterDetailPageState extends State<ChapterDetailPage> {
               title: Text("Đọc truyện"),
             ),
             body: ListView(
+              controller: _scrollController,
               children: List.generate(
                 model.chapter.images.length,
                 (index) {

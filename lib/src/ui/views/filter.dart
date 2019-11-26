@@ -18,10 +18,11 @@ class _FilterPageState extends State<FilterPage> {
   void onChoosedComic(ComicCover comicCover, String part) {
     var model = Provider.of<ComicDetailPageModel>(context);
     model.onLoadData(comicCover.id);
-    model.setFollow(
-        Provider.of<FollowDao>(context).idFollowedComics.contains(comicCover.id));
-    model
-        .setLike(Provider.of<LikeDao>(context).idLikedComics.contains(comicCover.id));
+    model.setFollow(Provider.of<FollowDao>(context)
+        .idFollowedComics
+        .contains(comicCover.id));
+    model.setLike(
+        Provider.of<LikeDao>(context).idLikedComics.contains(comicCover.id));
 
     Navigator.of(context).push(
       MaterialPageRoute(
@@ -47,7 +48,10 @@ class _FilterPageState extends State<FilterPage> {
                     children: [
                       TableRow(
                         children: [
-                          Text("Thể loại truyện"),
+                          Text(
+                            "Thể loại truyện",
+                            style: const TextStyle(fontSize: 16),
+                          ),
                           DropdownButton<String>(
                             isExpanded: true,
                             value: model.idType,
@@ -73,7 +77,10 @@ class _FilterPageState extends State<FilterPage> {
                       ),
                       TableRow(
                         children: [
-                          Text("Tình trạng"),
+                          Text(
+                            "Tình trạng",
+                            style: const TextStyle(fontSize: 16),
+                          ),
                           DropdownButton<int>(
                             isExpanded: true,
                             value: model.state,
@@ -99,7 +106,10 @@ class _FilterPageState extends State<FilterPage> {
                       ),
                       TableRow(
                         children: [
-                          Text("Giới tính"),
+                          Text(
+                            "Giới tính",
+                            style: const TextStyle(fontSize: 16),
+                          ),
                           DropdownButton<int>(
                             isExpanded: true,
                             value: model.gender,
@@ -125,7 +135,10 @@ class _FilterPageState extends State<FilterPage> {
                       ),
                       TableRow(
                         children: [
-                          Text("Độ tuổi"),
+                          Text(
+                            "Độ tuổi",
+                            style: const TextStyle(fontSize: 16),
+                          ),
                           DropdownButton<Age>(
                             isExpanded: true,
                             value: model.age,
@@ -151,7 +164,10 @@ class _FilterPageState extends State<FilterPage> {
                       ),
                       TableRow(
                         children: [
-                          Text("Sắp xếp"),
+                          Text(
+                            "Sắp xếp",
+                            style: const TextStyle(fontSize: 16),
+                          ),
                           DropdownButton<Sort>(
                             isExpanded: true,
                             value: model.sort,
@@ -177,14 +193,16 @@ class _FilterPageState extends State<FilterPage> {
                       ),
                       TableRow(
                         children: [
-                          FlatButton(
-                            child: Text('Clear'),
+                          FlatButton.icon(
+                            icon: Icon(Icons.clear),
+                            label: Text('Bỏ chọn'),
                             onPressed: model.clear,
                           ),
-                          FlatButton(
-                            child: Text('Filter'),
+                          FlatButton.icon(
+                            icon: Icon(Icons.filter_list),
+                            label: Text('Lọc'),
                             onPressed: model.fetchFilter,
-                          ),
+                          )
                         ],
                       ),
                     ],

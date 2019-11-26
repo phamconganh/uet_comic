@@ -45,10 +45,10 @@ class _FollowedPageState extends State<FollowedPage> {
                     const Divider(),
                     ListTile(
                       leading:
-                          const Icon(FontAwesomeIcons.heart, color: Colors.red),
+                          const Icon(FontAwesomeIcons.heart, color: Colors.orange),
                       title: const Text(
                         "Bạn chưa theo dõi truyện nào",
-                        style: TextStyle(color: Colors.red),
+                        style: TextStyle(color: Colors.orange),
                         overflow: TextOverflow.ellipsis,
                       ),
                     )
@@ -59,10 +59,10 @@ class _FollowedPageState extends State<FollowedPage> {
                     const Divider(),
                     const ListTile(
                       leading:
-                          const Icon(FontAwesomeIcons.heart, color: Colors.red),
+                          const Icon(FontAwesomeIcons.heart, color: Colors.orange),
                       title: const Text(
                         "Truyện đã theo dõi",
-                        style: TextStyle(color: Colors.red),
+                        style: TextStyle(color: Colors.orange),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),

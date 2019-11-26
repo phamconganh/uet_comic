@@ -1,6 +1,7 @@
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:uet_comic/src/core/models/chapter.dart';
 import 'package:uet_comic/src/core/models/comic.dart';
@@ -40,7 +41,7 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
       Navigator.of(context).push(
         MaterialPageRoute(
           builder: (BuildContext context) => ChapterDetailPage(
-            indexChapter: index,
+            indexChapter: chapters.length - index - 1,
             chapters: chapters.reversed.toList(),
             comic: model.comicDetail,
             isDownloaded: model.isDownloaded,
@@ -108,47 +109,72 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
       },
     );
     if (confirm == true) {
+      Comic downloadedComic = Comic.fromMap(model.comicDetail.toMap());
+      List<Chapter> chapters = model.chapters;
+      model.setIsDownloading(true);
+      if (downloadedComic.id == model.comicDetail.id) {
+        model.setPercentDownloaded(0);
+      }
       try {
-        model.setIsDownloading(true);
-        String imageLink = await LocalFileService.instance
-            .saveImage(model.comicDetail.imageLink);
+        String imageLink = await LocalFileService.instance.saveImage(
+            url: downloadedComic.imageLink, comicFolder: downloadedComic.id);
 
-        Comic downloadedComic = model.comicDetail;
         downloadedComic.imageLink = imageLink;
-        ComicDao comicDao = Provider.of(context);
-        comicDao.add(model.comicDetail);
+        downloadedComic.isInProcess = true;
 
-        // int total = 0;
-        // for (var i = 0; i < model.chapters.length; i++) {
-        //   total += model.chapters[i].images.length;
-        // }
+        ComicDao comicDao = Provider.of(context);
+        int key = await comicDao.add(downloadedComic);
+
+        int total = 0;
+        for (var i = 0; i < chapters.length; i++) {
+          total += chapters[i].images.length;
+        }
+        int count = 0;
 
         ChapterDao chapterDao = Provider.of(context);
         List<Chapter> downloadedChapters = [];
-        for (var i = 0; i < model.chapters.length; i++) {
-          Chapter chapter = model.chapters[i];
+
+        for (var i = 0; i < chapters.length; i++) {
+          Chapter chapter = chapters[i];
           Chapter downloadedChapter = Chapter.fromMap(chapter.toMap());
           downloadedChapter.images = [];
-          for (var j = 0; j < chapter.images.length; i++) {
+          for (var j = 0; j < chapter.images.length; j++) {
             var image = chapter.images[j];
+            print("Start download $image");
             try {
               image = await LocalFileService.instance
-                  .saveImage(model.comicDetail.imageLink);
+                  .saveImage(url: image, comicFolder: downloadedComic.id);
               downloadedChapter.images.add(image);
             } catch (e) {
-              print(e);
+              print("Error download $image");
+            }
+            count++;
+            double percent = count / total;
+            if (downloadedComic.id == model.comicDetail.id) {
+              model.setPercentDownloaded(percent);
             }
           }
-          if(downloadedChapter.images.isNotEmpty && chapter.images.isNotEmpty) {
+          if (downloadedChapter.images.isNotEmpty &&
+              chapter.images.isNotEmpty) {
             chapterDao.add(downloadedChapter);
             downloadedChapters.add(downloadedChapter);
           }
         }
-        model.setChapters(downloadedChapters);
-        model.setIsDownloading(false);
-        model.setDownloaded(true);
+
+        downloadedComic.isInProcess = false;
+        comicDao.unProcess(key, downloadedComic.id);
+        // check xem co phai van dang o trong trang truyen dang tai hay khong
+        if (downloadedComic.id == model.comicDetail.id) {
+          model.setComicDetail(downloadedComic);
+          model.setChapters(downloadedChapters);
+          model.setDownloaded(true);
+        }
       } catch (e) {
-        print(e);
+        print("Error download ${downloadedComic.id} + ${e.toString()}");
+      }
+      if (downloadedComic.id == model.comicDetail.id) {
+        model.setIsDownloading(false);
+        model.setPercentDownloaded(0);
       }
     }
   }
@@ -206,20 +232,48 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
                                 ),
                               ],
                             ),
-                      const Divider(),
-                      _buildTitleChapters(),
-                      model.isDownloading ? CircularProgressIndicator() : Container(),
-                      model.chapters.length == 0 && model.chapters == null
-                          ? Container()
-                          : Container(
-                              child: ChapterList(
-                                chapters: model.chapters,
-                                onReadIndexChapter: (index) {
-                                  onReadIndexChapter(model.chapters, index);
-                                },
-                              ),
-                            ),
-                      heightPadding,
+                      Card(
+                        elevation: 5,
+                        margin: const EdgeInsets.all(5.0),
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                            top: 5,
+                            right: 10,
+                            left: 10,
+                            bottom: 15,
+                          ),
+                          child: Column(
+                            children: <Widget>[
+                              _buildTitleChapters(),
+                              model.isDownloading
+                                  ? CircularPercentIndicator(
+                                      radius: 30,
+                                      lineWidth: 2,
+                                      percent: model.percentDownloaded,
+                                      center: Text(
+                                        "${(model.percentDownloaded * 100).round()} %",
+                                        style: TextStyle(fontSize: 10),
+                                      ),
+                                      progressColor: Colors.green,
+                                      // animation: true,
+                                    )
+                                  : Container(),
+                              model.chapters.length == 0 &&
+                                      model.chapters == null
+                                  ? Container()
+                                  : Container(
+                                      child: ChapterList(
+                                        chapters: model.chapters,
+                                        onReadIndexChapter: (index) {
+                                          onReadIndexChapter(
+                                              model.chapters, index);
+                                        },
+                                      ),
+                                    ),
+                            ],
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 );
@@ -245,7 +299,7 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
           model.isDownloaded || model.comicDetail == null
               ? Container()
               : IconButton(
-                  icon: const Icon(Icons.cloud_download),
+                  icon: const Icon(Icons.cloud_download, color: Colors.green,),
                   onPressed: downloadAllChapter,
                 )
         ],
@@ -311,86 +365,144 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
           shape: boderButton,
         );
 
-        return Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                model.comicDetail.name,
-                style: Theme.of(context).textTheme.headline,
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
-              ),
-              heightSpace,
-              Text(
-                "Tác giả: ${model.comicDetail?.author?.name}",
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                "Tình trạng: $state",
-                overflow: TextOverflow.ellipsis,
-              ),
-              heightSpace,
-              Container(
-                width: double.infinity,
-                child: Wrap(
-                  spacing: 5.0,
-                  alignment: WrapAlignment.center,
-                  children: <Widget>[
-                    readFirstButton,
-                    model.isFollowed ? unfollowButton : followButton,
-                    model.isLiked ? unLikeButton : likeButton,
-                  ],
-                ),
-              ),
-              heightSpace,
-              Wrap(
-                crossAxisAlignment: WrapCrossAlignment.center,
-                children: [
-                  const Text('Thống kê: '),
-                  const Icon(Icons.thumb_up),
-                  Text(' ${model.comicDetail.like}  '),
-                  const Icon(FontAwesomeIcons.heart),
-                  Text(' ${model.comicDetail.follow}  '),
-                  const Icon(Icons.remove_red_eye),
-                  Text(' ${model.comicDetail.view}')
-                ],
-              ),
-              heightSpace,
-              TypeList(
-                types: model.comicDetail.types,
-                findComicByType: onFindComicByType,
-              ),
-              ExpandablePanel(
-                header: const Text(
-                  "Nội dung truyện",
-                  overflow: TextOverflow.ellipsis,
-                ),
-                headerAlignment: ExpandablePanelHeaderAlignment.center,
-                collapsed: Padding(
-                  padding: const EdgeInsets.only(left: 5.0, right: 5.0),
-                  child: Text(
-                    model.comicDetail.content,
-                    softWrap: true,
-                    maxLines: 2,
+        return Card(
+          elevation: 2,
+          margin: const EdgeInsets.all(5.0),
+          child: Padding(
+            padding: const EdgeInsets.only(
+              left: 10,
+              right: 10,
+              top: 5,
+              bottom: 15,
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                ListTile(
+                  leading: Icon(
+                    Icons.book,
+                    color: Colors.blue,
+                  ),
+                  title: Text(
+                    model.comicDetail.name,
+                    style: Theme.of(context).textTheme.headline,
                     overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
                   ),
                 ),
-                expanded: Padding(
-                  padding: const EdgeInsets.only(left: 5.0),
-                  child: Text(
-                    model.comicDetail.content,
-                    softWrap: true,
+                Padding(
+                  padding: const EdgeInsets.only(left: 16, right: 16),
+                  child: Table(
+                    defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                    columnWidths: {0: FractionColumnWidth(0.35)},
+                    children: [
+                      TableRow(
+                        children: [
+                          TableCell(
+                            child: Text(
+                              "Tác giả:",
+                              style: Theme.of(context).textTheme.body2,
+                            ),
+                          ),
+                          TableCell(
+                            child: Center(
+                              child: Text(
+                                "${model.comicDetail?.author?.name}",
+                                overflow: TextOverflow.ellipsis,
+                                style: Theme.of(context).textTheme.body2,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      TableRow(
+                        children: [
+                          TableCell(
+                            child: Text(
+                              "Tình trạng:",
+                              style: Theme.of(context).textTheme.body2,
+                            ),
+                          ),
+                          TableCell(
+                            child: Center(
+                              child: Text(
+                                "$state",
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
-                tapHeaderToExpand: true,
-                tapBodyToCollapse: true,
-                hasIcon: true,
-              )
-            ],
+                Container(
+                  width: double.infinity,
+                  child: Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    alignment: WrapAlignment.center,
+                    children: [
+                      const Icon(
+                        Icons.thumb_up,
+                        color: Colors.blue,
+                      ),
+                      Text(' ${model.comicDetail.like}  '),
+                      const Icon(
+                        FontAwesomeIcons.heart,
+                        color: Colors.pink,
+                      ),
+                      Text(' ${model.comicDetail.follow}  '),
+                      const Icon(
+                        Icons.remove_red_eye,
+                        color: Colors.pink,
+                      ),
+                      Text(' ${model.comicDetail.view}')
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 16, right: 10, bottom: 12),
+                  child: ExpandablePanel(
+                    header: Text(
+                      "Nội dung truyện",
+                      style: Theme.of(context).textTheme.body2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    headerAlignment: ExpandablePanelHeaderAlignment.center,
+                    collapsed: Text(
+                      model.comicDetail.content,
+                      softWrap: true,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    expanded: Text(
+                      model.comicDetail.content,
+                      softWrap: true,
+                    ),
+                    tapHeaderToExpand: true,
+                    tapBodyToCollapse: true,
+                    hasIcon: true,
+                  ),
+                ),
+                TypeList(
+                  types: model.comicDetail.types,
+                  findComicByType: onFindComicByType,
+                ),
+                Container(
+                  width: double.infinity,
+                  child: Wrap(
+                    spacing: 5.0,
+                    alignment: WrapAlignment.center,
+                    children: <Widget>[
+                      readFirstButton,
+                      model.isFollowed ? unfollowButton : followButton,
+                      model.isLiked ? unLikeButton : likeButton,
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         );
       },

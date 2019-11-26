@@ -31,12 +31,14 @@ class Comic extends ComicCover {
     this.author,
     this.types,
     this.idTypes,
+    bool isInProcess,
   }) : super(
           id: id,
           name: name,
           imageLink: imageLink,
           lastChapter: lastChapter,
           lastUpdate: lastUpdate,
+          isInProcess: isInProcess,
         );
 
   factory Comic.fromMap(Map<String, dynamic> map) => Comic(
@@ -59,6 +61,7 @@ class Comic extends ComicCover {
             ?.map((e) => comic_type.Type.fromMap(e))
             ?.toList(),
         idTypes: (map['idTypes'] as List)?.map((e) => e.toString())?.toList(),
+        isInProcess: map['isInProcess'] as bool,
       );
 
   Map<String, dynamic> toMap() => <String, dynamic>{
@@ -75,7 +78,8 @@ class Comic extends ComicCover {
         'gender': gender,
         'lastUpdate': lastUpdate.toString(),
         'author': author.toMap(),
-        'types': types.map((e) => e.toMap()),
+        'types': types.map((e) => e.toMap()).toList(),
         'idTypes': idTypes,
+        'isInProcess': isInProcess,
       };
 }

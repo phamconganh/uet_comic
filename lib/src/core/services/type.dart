@@ -6,15 +6,14 @@ class TypeService {
   static final TypeService instance = TypeService.internal();
   TypeService.internal();
   factory TypeService() => instance;
-  final CollectionReference ref = Firestore.instance.collection('type');
 
-  Future<comic_type.Type> fetchTypeById(String id) async {
-    DocumentSnapshot documentSnapshot = await ref.document(id).get();
-    return comic_type.Type.fromMap(documentSnapshot.data);
-  }
+  static final String path = "type";
+  final CollectionReference ref = Firestore.instance.collection(path);
 
   Future<List<comic_type.Type>> fetchTypes() async {
     QuerySnapshot querySnapshot = await ref.getDocuments();
-    return querySnapshot.documents.map((e)=> comic_type.Type.fromMap(e.data)).toList();
+    return querySnapshot.documents
+        .map((e) => comic_type.Type.fromMap(e.data))
+        .toList();
   }
 }

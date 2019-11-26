@@ -30,12 +30,26 @@ class ComicDao extends ChangeNotifier {
     }
   }
 
-  void add(Comic comic) async {
+  Future<int> add(Comic comic) async {
     print("Before add download: " + _downloadedComics.toString());
     if (_downloadedComics.indexWhere((e) => e.id == comic.id) == -1) {
       _downloadedComics.add(comic);
       print("After add download: " + _downloadedComics.toString());
-      await _comicsStore.add(await _db, comic.toMap());
+      int key = await _comicsStore.add(await _db, comic.toMap());
+      notifyListeners();
+      return key;
+    }
+    return -1;
+  }
+
+  void unProcess(int key, String id) async {
+    if (key != null && key > -1) {
+      var record = _comicsStore.record(key);
+      record.update(await _db, {"isInProcess": false});
+    }
+    int index = _downloadedComics.indexWhere((e) => e.id == id);
+    if (index > -1) {
+      _downloadedComics[index].isInProcess = false;
       notifyListeners();
     }
   }

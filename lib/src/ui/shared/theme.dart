@@ -10,8 +10,9 @@ IconThemeData _customIconTheme(IconThemeData original) {
 ThemeData _buildShrineTheme() {
   final ThemeData base = ThemeData.light();
   return base.copyWith(
-    accentColor: kUetComicBrown900,
-    primaryColor: kUetComicPink100,
+    // accentColor: kUetComicBrown900,
+    // primaryColor: kUetComicPink100,
+    primaryColor: Colors.blue[300],
     scaffoldBackgroundColor: kUetComicBackgroundWhite,
     cardColor: kUetComicBackgroundWhite,
     textSelectionColor: kUetComicPink100,

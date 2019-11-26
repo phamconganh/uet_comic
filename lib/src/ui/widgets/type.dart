@@ -16,17 +16,25 @@ class TypeList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Wrap(
-      spacing: 3.0,
-      children: List.generate(
-        types.length,
-        (index) => RaisedButton(
-          child: Text(
-            types[index].name,
+    return Container(
+      width: double.infinity,
+      child: Wrap(
+        spacing: 3.0,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        alignment: WrapAlignment.center,
+        children: List.generate(
+          types.length,
+          (index) => Tooltip(
+            child: RaisedButton(
+              child: Text(
+                types[index].name,
+              ),
+              onPressed: () {
+                if (findComicByType != null) findComicByType(types[index].id);
+              },
+            ),
+            message: "Tìm kiếm truyện theo thể loại",
           ),
-          onPressed: () {
-            if (findComicByType != null) findComicByType(types[index].id);
-          },
         ),
       ),
     );

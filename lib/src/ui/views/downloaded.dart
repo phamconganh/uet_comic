@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:uet_comic/src/core/models/comic_cover.dart';
+import 'package:uet_comic/src/core/services/local_file.dart';
 import 'package:uet_comic/src/core/view_models/shared/chapter_dao.dart';
 import 'package:uet_comic/src/core/view_models/shared/comic_dao.dart';
 // import 'package:uet_comic/src/core/view_models/shared/follow_dao.dart';
@@ -48,6 +49,8 @@ class _DownloadedPageState extends State<DownloadedPage> {
     );
     if (confirm) {
       Provider.of<ComicDao>(context).remove(comicCover.id);
+      Provider.of<ChapterDao>(context).removeByIdComic(comicCover.id);
+      LocalFileService.instance.deleteComicFolder(comicCover.id);
     }
   }
 
@@ -59,10 +62,10 @@ class _DownloadedPageState extends State<DownloadedPage> {
               children: <Widget>[
                 const Divider(),
                 ListTile(
-                  leading: const Icon(Icons.folder, color: Colors.red),
+                  leading: const Icon(Icons.folder, color: Colors.pink),
                   title: const Text(
                     "Bạn chưa tải truyện nào",
-                    style: TextStyle(color: Colors.red),
+                    style: TextStyle(color: Colors.pink),
                     overflow: TextOverflow.ellipsis,
                   ),
                 )
@@ -72,10 +75,10 @@ class _DownloadedPageState extends State<DownloadedPage> {
               children: <Widget>[
                 const Divider(),
                 const ListTile(
-                  leading: const Icon(Icons.folder, color: Colors.red),
+                  leading: const Icon(Icons.folder, color: Colors.pink),
                   title: const Text(
                     "Truyện đã tải",
-                    style: TextStyle(color: Colors.red),
+                    style: TextStyle(color: Colors.pink),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),

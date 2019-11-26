@@ -37,4 +37,13 @@ class ChapterDao extends ChangeNotifier {
       ),
     );
   }
+
+  void removeByIdComic(String id) async {
+    _chaptersStore.delete(
+      await _db,
+      finder: Finder(
+        filter: Filter.equals("idComic", id),
+      ),
+    );
+  }
 }

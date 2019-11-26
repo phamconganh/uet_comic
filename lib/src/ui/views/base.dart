@@ -30,22 +30,22 @@ class _BasePageState extends State<BasePage> {
   final items = <BottomNavyBarItem>[
     BottomNavyBarItem(
       icon: Icon(Icons.home),
-      title: Text('Home'),
+      title: Text('Trang chủ'),
       activeColor: Colors.red,
     ),
     BottomNavyBarItem(
       icon: Icon(Icons.filter_list),
-      title: Text('Search'),
+      title: Text('Lọc truyện'),
       activeColor: Colors.purpleAccent,
     ),
     BottomNavyBarItem(
       icon: Icon(FontAwesomeIcons.heart),
-      title: Text('Followed'),
+      title: Text('Theo dõi'),
       activeColor: Colors.orange,
     ),
     BottomNavyBarItem(
       icon: Icon(Icons.folder),
-      title: Text('Downloaded'),
+      title: Text('Truyện đã tải'),
       activeColor: Colors.pink,
     ),
   ];

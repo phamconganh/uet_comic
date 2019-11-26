@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:uet_comic/src/core/models/comic_cover.dart';
 import 'package:uet_comic/src/ui/shared/type_def.dart';
 import 'package:uet_comic/src/ui/widgets/images.dart';
@@ -10,17 +9,19 @@ class ComicCoverList extends StatelessWidget {
   final List<ComicCover> comicCovers;
   final ChooseComicCoverPart onChoosedComic;
   final ChooseComicCover onDeleteComic;
+  final ChooseComicCover onReloadComic;
   final bool isDownloaded;
   final String part;
 
-  ComicCoverList(
-      {Key key,
-      @required this.comicCovers,
-      @required this.part,
-      this.isDownloaded,
-      this.onChoosedComic,
-      this.onDeleteComic})
-      : assert(comicCovers != null),
+  ComicCoverList({
+    Key key,
+    @required this.comicCovers,
+    @required this.part,
+    this.isDownloaded,
+    this.onChoosedComic,
+    this.onDeleteComic,
+    this.onReloadComic,
+  })  : assert(comicCovers != null),
         assert(part != null),
         super(key: key);
 
@@ -37,28 +38,11 @@ class ComicCoverList extends StatelessWidget {
               onChoosedComic(comicCovers[index], part);
             }
           },
-          onLongPress: () {
-            // showMenu(
-            //   position: RelativeRect.fromLTRB(10, 10, 10, 10),
-            //   // onSelected: () {},
-            //   items: <PopupMenuEntry>[
-            //     PopupMenuItem(
-            //       value: 0,
-            //       child: Row(
-            //         children: <Widget>[
-            //           Icon(Icons.delete),
-            //           Text("Delete"),
-            //         ],
-            //       ),
-            //     )
-            //   ],
-            //   context: context,
-            // );
-          },
           child: ComicCoverItem(
             comicCover: comicCovers[index],
             isDownloaded: isDownloaded,
             onDeleteComic: onDeleteComic,
+            onReloadComic: onReloadComic,
             part: part,
           ),
         ),
@@ -72,6 +56,7 @@ class ComicCoverItem extends StatelessWidget {
   final String part;
   final isDownloaded;
   final ChooseComicCover onDeleteComic;
+  final ChooseComicCover onReloadComic;
 
   ComicCoverItem({
     Key key,
@@ -79,6 +64,7 @@ class ComicCoverItem extends StatelessWidget {
     @required this.part,
     this.isDownloaded,
     this.onDeleteComic,
+    this.onReloadComic,
   })  : assert(comicCover != null),
         assert(part != null),
         super(key: key);
@@ -98,21 +84,42 @@ class ComicCoverItem extends StatelessWidget {
               part: part,
               isDownloaded: isDownloaded,
             ),
-            Positioned.fill(
-              child: Align(
-                alignment: Alignment.center,
-                child: ClipOval(
-                  child: Container(
-                    color: Colors.white,
-                    child: Icon(
-                      Icons.check_circle,
-                      color: Colors.green,
+            isDownloaded == true
+                ? Positioned.fill(
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: ClipOval(
+                        child: Container(
+                          color: Colors.white,
+                          child: comicCover.isInProcess == true
+                              ? Tooltip(
+                                  child: Icon(
+                                    Icons.sync,
+                                    color: Colors.orange,
+                                  ),
+                                  message: "Chưa tải truyện xong",
+                                )
+                              : Tooltip(
+                                  // child: AnimatedBuilder(
+                                  //   animation: Tween(begin: 0.0, end: 1.0).animate(null),
+                                  child: Icon(
+                                    Icons.check_circle,
+                                    color: Colors.green,
+                                  ),
+                                  //   builder: (context, child) {
+                                  //     return Transform.rotate(
+                                  //       angle: ,
+                                  //     )
+                                  //   },
+                                  // ),
+                                  message: "Đã tải truyện xuống",
+                                ),
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              ),
-            ),
-            onDeleteComic != null
+                  )
+                : Container(),
+            isDownloaded == true
                 ? Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[
@@ -123,17 +130,18 @@ class ComicCoverItem extends StatelessWidget {
                             heroTag: comicCover.id +
                                 "_" +
                                 part +
-                                "_sync_float_action",
+                                "_reload_float_action",
                             backgroundColor: Colors.white,
                             elevation: 10,
                             child: Icon(
-                              Icons.sync,
-                              color: Colors.red,
+                              Icons.refresh,
+                              color: Colors.blue,
                             ),
                             onPressed: () {
-                              onDeleteComic(comicCover);
+                              if (onReloadComic != null)
+                                onReloadComic(comicCover);
                             },
-                            tooltip: "Xóa truyện",
+                            tooltip: "Tải lại truyện",
                           ),
                           width: 30,
                           height: 30,
@@ -157,7 +165,8 @@ class ComicCoverItem extends StatelessWidget {
                               color: Colors.red,
                             ),
                             onPressed: () {
-                              onDeleteComic(comicCover);
+                              if (onDeleteComic != null)
+                                onDeleteComic(comicCover);
                             },
                             tooltip: "Xóa truyện",
                           ),
@@ -165,27 +174,6 @@ class ComicCoverItem extends StatelessWidget {
                           height: 30,
                         ),
                       ),
-                      // GestureDetector(
-                      //   behavior: HitTestBehavior.opaque,
-                      //   child: SizedBox(
-                      //     child: FloatingActionButton(
-                      //       heroTag:
-                      //           comicCover.id + "_" + part + "_reload_float_action",
-                      //       backgroundColor: Colors.white,
-                      //       elevation: 10,
-                      //       child: Icon(
-                      //         Icons.delete_forever,
-                      //         color: Colors.red,
-                      //       ),
-                      //       onPressed: () {
-                      //         onDeleteComic(comicCover);
-                      //       },
-                      //       tooltip: "Xóa truyện",
-                      //     ),
-                      //     width: 30,
-                      //     height: 30,
-                      //   ),
-                      // ),
                     ],
                   )
                 : Container(),

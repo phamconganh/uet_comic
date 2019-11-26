@@ -9,7 +9,8 @@ class ComicService {
   ComicService.internal();
   factory ComicService() => instance;
 
-  final CollectionReference ref = Firestore.instance.collection('comic');
+  static final String path = "comic";
+  final CollectionReference ref = Firestore.instance.collection(path);
 
   Future<List<ComicCover>> fetchNewComicCovers() async {
     QuerySnapshot data = await ref

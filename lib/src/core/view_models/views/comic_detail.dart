@@ -19,6 +19,13 @@ class ComicDetailPageModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  double _percentDownloaded = 0;
+  double get percentDownloaded => _percentDownloaded;
+  void setPercentDownloaded(double value) {
+    _percentDownloaded = value;
+    notifyListeners();
+  }
+
   bool _isDownloading = false;
   bool get isDownloading => _isDownloading;
   void setIsDownloading(bool value) {
@@ -153,6 +160,7 @@ class ComicDetailPageModel extends ChangeNotifier {
     _isFollowed = false;
     _isLiked = false;
     _isDownloading = false;
+    _percentDownloaded = 0;
     // _isFetchingComicDetail = false;
     _comicDetail = null;
     // _isFetchingChapters = false;

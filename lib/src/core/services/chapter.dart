@@ -6,7 +6,9 @@ class ChapterService {
   static final ChapterService instance = ChapterService.internal();
   ChapterService.internal();
   factory ChapterService() => instance;
-  final CollectionReference ref = Firestore.instance.collection('chapter');
+
+  static final String path = "chapter";
+  final CollectionReference ref = Firestore.instance.collection(path);
 
   Future<List<Chapter>> fetchChaptersByIdComic(String idComic) async {
     QuerySnapshot data =

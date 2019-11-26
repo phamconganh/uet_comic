@@ -1,6 +1,5 @@
 import 'package:provider/provider.dart';
 import 'package:uet_comic/src/core/models/config.dart';
-import 'package:uet_comic/src/core/services/connectivity.dart';
 import 'package:uet_comic/src/core/view_models/shared/chapter_dao.dart';
 import 'package:uet_comic/src/core/view_models/shared/comic_dao.dart';
 import 'package:uet_comic/src/core/view_models/shared/follow_dao.dart';
@@ -48,18 +47,12 @@ List<SingleChildCloneableWidget> getProviders(Config config) {
     ChangeNotifierProvider(
       builder: (context) => HomePageModel(),
     ),
-    StreamProvider.value(
-      value: ConnectivityService().networkStatusController.stream,
-    )
   ];
 
   List<SingleChildCloneableWidget> dependentServices = [
     ChangeNotifierProxyProvider<FollowDao, FollowedPageModel>(
       builder: (_, followDao, __) => FollowedPageModel(followDao: followDao),
     ),
-    // ChangeNotifierProxyProvider<ComicDao, DownloadedPageModel>(
-    //   builder: (_, ComicDao, __) => DownloadedPageModel(ComicDao: ComicDao),
-    // ),
   ];
 
   // List<SingleChildCloneableWidget> uiConsumableProviders = [
