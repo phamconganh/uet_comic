@@ -13,6 +13,8 @@ class KeyValue {
 
 enum Age { UNDER_12, FROM_12_TO_18, UPPER_18 }
 enum Sort { DESC_VIEW, ASC_VIEW }
+enum TypeLogin { GG, FB }
+enum StatusLogin { ERROR, SUCCESS, CANCEL }
 
 final List<KeyValue> states = [
   KeyValue(key: 0, value: "Chưa hoàn thành"),

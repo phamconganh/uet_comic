@@ -1,18 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:sembast/sembast.dart';
 import 'package:uet_comic/src/core/services/local.dart';
+import 'package:uet_comic/src/core/services/user_data.dart';
+import 'package:uet_comic/src/core/view_models/views/account.dart';
 
 class SearchDao extends ChangeNotifier {
   static const String SEARCHES_RECORD = 'searches';
   Future<Database> get _db async => await LocalService.instance.database;
   final _searchesRecord = StoreRef.main().record(SEARCHES_RECORD);
 
-  SearchDao() {
+  final AccountModel accountModel;
+
+  SearchDao({this.accountModel}) {
     init();
   }
 
   List<String> _nameSearchedComics = [];
   List<String> get nameSearchedComics => _nameSearchedComics;
+  void setNameSearchedComics(List<String> nameSearchedComics) {
+    _nameSearchedComics = nameSearchedComics;
+    notifyListeners();
+    rewrite();
+  }
 
   Future init() async {
     try {
@@ -36,6 +45,9 @@ class SearchDao extends ChangeNotifier {
       print("After add SEARCH: " + _nameSearchedComics.toString());
       notifyListeners();
       rewrite();
+      if(accountModel.isLogined) {
+        UserDataService.instance.addSearchedComic(accountModel.currentUser.uid, name);
+      }
     }
   }
 
@@ -47,6 +59,9 @@ class SearchDao extends ChangeNotifier {
       print("After remove SEARCH: " + _nameSearchedComics.toString());
       notifyListeners();
       rewrite();
+      if(accountModel.isLogined) {
+        UserDataService.instance.removeSearchedComic(accountModel.currentUser.uid, name);
+      }
     }
   }
 

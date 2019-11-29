@@ -1,24 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:sembast/sembast.dart';
 import 'package:uet_comic/src/core/services/local.dart';
+import 'package:uet_comic/src/core/services/user_data.dart';
+import 'package:uet_comic/src/core/view_models/views/account.dart';
 
 class LikeDao extends ChangeNotifier {
   static const String LIKE_RECORD = 'likes';
-  // final _followStore = intMapStoreFactory.store(LIKE_STORE_NAME);
   Future<Database> get _db async => await LocalService.instance.database;
   final _likesRecord = StoreRef.main().record(LIKE_RECORD);
 
-  LikeDao() {
+  final AccountModel accountModel;
+
+  LikeDao({this.accountModel}) {
     init();
   }
 
   List<String> _idLikedComics = [];
   List<String> get idLikedComics => _idLikedComics;
+  void setIdLikedComics(List<String> idLikedComics) {
+    _idLikedComics = idLikedComics;
+    notifyListeners();
+    rewrite();
+  }
 
   Future init() async {
     try {
       final _idLikedComicsTmp = await _likesRecord.get(await _db);
-      if(_idLikedComicsTmp != null) {
+      if (_idLikedComicsTmp != null) {
         // do _idLikedComicsTmp la read-only
         _idLikedComics = List.from(_idLikedComicsTmp);
         print("_idLikedComics: $_idLikedComics");
@@ -34,6 +42,9 @@ class LikeDao extends ChangeNotifier {
       _idLikedComics.add(id);
       notifyListeners();
       rewrite();
+      if(accountModel.isLogined) {
+        UserDataService.instance.addLikedComic(accountModel.currentUser.uid, id);
+      }
     }
   }
 
@@ -43,6 +54,9 @@ class LikeDao extends ChangeNotifier {
       _idLikedComics.removeAt(index);
       notifyListeners();
       rewrite();
+      if(accountModel.isLogined) {
+        UserDataService.instance.removeLikedComic(accountModel.currentUser.uid, id);
+      }
     }
   }
 

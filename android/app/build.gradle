@@ -64,10 +64,6 @@ android {
             keyPassword keystoreProperties['keyPassword']
             storeFile file(keystoreProperties['storeFile'])
             storePassword keystoreProperties['storePassword']
-            // keyAlias 'hoclieu'
-            // keyPassword 'hoclieu'
-            // storeFile file('../../keystore/release.keystore')
-            // storePassword 'hoclieu'
         }
     }
 

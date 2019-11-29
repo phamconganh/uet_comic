@@ -6,7 +6,7 @@ import 'package:uet_comic/src/core/models/search.dart';
 import 'package:uet_comic/src/core/services/comic.dart';
 import 'package:uet_comic/src/core/services/search.dart';
 import 'package:uet_comic/src/core/view_models/shared/follow_dao.dart';
-import 'package:uet_comic/src/core/view_models/shared/like_dow.dart';
+import 'package:uet_comic/src/core/view_models/shared/like_dao.dart';
 import 'package:uet_comic/src/core/view_models/shared/search_dao.dart';
 import 'package:uet_comic/src/core/view_models/views/comic_detail.dart';
 import 'package:uet_comic/src/ui/views/comic_detail.dart';

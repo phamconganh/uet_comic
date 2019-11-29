@@ -19,7 +19,6 @@ class BasePage extends StatefulWidget {
 }
 
 class _BasePageState extends State<BasePage> {
-
   final bodyList = <Widget>[
     HomePage(),
     FilterPage(),
@@ -83,9 +82,18 @@ class _BasePageState extends State<BasePage> {
               ),
               IconButton(
                 tooltip: 'Account and Settings',
-                icon: Icon(
-                  Icons.account_circle,
-                ),
+                icon: model.accountModel.isLogined == true
+                    ? CircleAvatar(
+                        radius: 18,
+                        child: ClipOval(
+                          child: Image.network(
+                            model.accountModel.currentUser.photoUrl,
+                          ),
+                        ),
+                      )
+                    : Icon(
+                        Icons.account_circle,
+                      ),
                 onPressed: showSettingPage,
               ),
             ],
