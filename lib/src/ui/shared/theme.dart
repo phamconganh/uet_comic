@@ -27,8 +27,16 @@ ThemeData _buildShrineTheme() {
       border: OutlineInputBorder(),
     ),
     textTheme: _buildShrineTextTheme(base.textTheme),
-    primaryTextTheme: _buildShrineTextTheme(base.primaryTextTheme),
+    primaryTextTheme: TextTheme(title: TextStyle(color: Colors.white)),
     accentTextTheme: _buildShrineTextTheme(base.accentTextTheme),
+    appBarTheme: AppBarTheme(
+      iconTheme: IconThemeData(
+        color: Colors.white, //change your color here
+      ),
+      actionsIconTheme: IconThemeData(
+        color: Colors.white, //change your color here
+      ),
+    ),
     iconTheme: _customIconTheme(base.iconTheme),
   );
 }

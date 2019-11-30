@@ -69,7 +69,7 @@ class _BasePageState extends State<BasePage> {
             title: Text(widget.title),
             actions: <Widget>[
               IconButton(
-                tooltip: 'Search',
+                tooltip: 'Tìm kiếm',
                 icon: Icon(
                   Icons.search,
                 ),
@@ -81,15 +81,17 @@ class _BasePageState extends State<BasePage> {
                 },
               ),
               IconButton(
-                tooltip: 'Account and Settings',
+                tooltip: 'Tài khoản và cài đặt',
                 icon: model.accountModel.isLogined == true
-                    ? CircleAvatar(
-                        radius: 18,
-                        child: ClipOval(
-                          child: Image.network(
+                    ?
+                    // CircleAvatar(
+                    //     radius: 18,
+                    //     child: ClipOval(
+                    //       child:
+                          Image.network(
                             model.accountModel.currentUser.photoUrl,
-                          ),
-                        ),
+                        //   ),
+                        // ),
                       )
                     : Icon(
                         Icons.account_circle,

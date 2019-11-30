@@ -4,7 +4,7 @@ import 'package:uet_comic/src/ui/shared/theme.dart';
 import 'package:uet_comic/src/ui/views/base.dart';
 
 class UetComicApp extends StatelessWidget {
-  final String title = 'UET comic';
+  final String title = 'UET Comic';
   final List<SingleChildCloneableWidget> providers;
   UetComicApp({this.providers});
 

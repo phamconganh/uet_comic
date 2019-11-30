@@ -23,60 +23,81 @@ class _SettingsPageState extends State<SettingsPage> {
           return model.accountModel.isLogined
               ? ListView(
                   children: <Widget>[
-                    const Divider(),
-                    const ListTile(
-                      leading: const Icon(
-                        Icons.account_box,
-                        color: Colors.black,
+                    Card(
+                      child: Column(
+                        children: <Widget>[
+                          const ListTile(
+                            leading: const Icon(
+                              Icons.account_box,
+                              color: Colors.black,
+                            ),
+                            title: Text('Thông tin tài khoản'),
+                          ),
+                          // CircleAvatar(
+                          //   radius: 50,
+                          //   child: ClipOval(
+                          //     child:
+                              Image.network(
+                                model.accountModel.currentUser.photoUrl,
+                              ),
+                          //   ),
+                          // ),
+                          Center(
+                            child: Text(
+                              model.accountModel.currentUser.displayName,
+                              style: Theme.of(context).textTheme.headline,
+                            ),
+                          ),
+                          FlatButton.icon(
+                            icon: Icon(FontAwesomeIcons.signOutAlt),
+                            label: Text("Đăng xuất"),
+                            onPressed: () {
+                              Provider.of<AccountModel>(context).logOut();
+                            },
+                          ),
+                        ],
                       ),
-                      title: Text('Thông tin tài khoản'),
                     ),
-                    CircleAvatar(
-                      radius: 50,
-                      child: ClipOval(
-                        child: Image.network(
-                          model.accountModel.currentUser.photoUrl,
-                        ),
+                    Card(
+                      child: Column(
+                        children: <Widget>[..._buildSettings()],
                       ),
-                    ),
-                    Center(
-                      child: Text(
-                        model.accountModel.currentUser.displayName,
-                        style: Theme.of(context).textTheme.headline,
-                      ),
-                    ),
-                    FlatButton.icon(
-                      icon: Icon(FontAwesomeIcons.signOutAlt),
-                      label: Text("Đăng xuất"),
-                      onPressed: () {
-                        Provider.of<AccountModel>(context).logOut();
-                      },
-                    ),
-                    ..._buildSettings()
+                    )
                   ],
                 )
               : ListView(
                   children: <Widget>[
-                    const Divider(),
-                    const ListTile(
-                      leading: const Icon(
-                        Icons.account_box,
-                        color: Colors.black,
-                      ),
-                      title: Text('Bạn chưa đăng nhập'),
-                    ),
-                    FlatButton.icon(
-                      icon: Icon(FontAwesomeIcons.signInAlt),
-                      label: Text("Đăng nhập"),
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (BuildContext context) => LoginPage(),
+                    Card(
+                      child: Column(
+                        children: <Widget>[
+                          const ListTile(
+                            leading: const Icon(
+                              Icons.account_box,
+                              color: Colors.black,
+                            ),
+                            title: Text('Bạn chưa đăng nhập'),
                           ),
-                        );
-                      },
+                          FlatButton.icon(
+                            icon: Icon(FontAwesomeIcons.signInAlt),
+                            label: Text("Đăng nhập"),
+                            onPressed: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                      LoginPage(),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
                     ),
-                    ..._buildSettings()
+                    Card(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[..._buildSettings()],
+                      ),
+                    ),
                   ],
                 );
         },
@@ -93,7 +114,27 @@ class _SettingsPageState extends State<SettingsPage> {
         ),
         title: Text('Cài đặt'),
       ),
-      
+      Padding(
+        padding: const EdgeInsets.only(left: 16, right: 16),
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            FlatButton(
+              child: Row(
+                children: <Widget>[Text("Đồng bộ dữ liệu")],
+              ),
+              onPressed: () {},
+            ),
+            FlatButton(
+              child: Row(
+                children: <Widget>[Text("Xóa dữ liệu")],
+              ),
+              onPressed: () {},
+            ),
+          ],
+        ),
+      )
     ];
   }
 }

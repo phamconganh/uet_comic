@@ -24,26 +24,55 @@ class _LoginPageState extends State<LoginPage> {
       appBar: AppBar(
         title: Text('Đăng nhập'),
       ),
-      body: SingleChildScrollView(
-        child: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              GoogleSignInButton(
-                text: 'Đăng nhập với google',
-                onPressed: () {
-                  login(TypeLogin.GG);
-                },
+      body: Stack(
+        alignment: AlignmentDirectional.center,
+        children: <Widget>[
+          Container(
+            decoration: new BoxDecoration(
+              gradient: new LinearGradient(
+                colors: [
+                  const Color(0xFF3366FF),
+                  const Color(0xFF00CCFF),
+                ],
+                begin: const FractionalOffset(0.0, 0.0),
+                end: const FractionalOffset(1.0, 0.0),
+                stops: [0.0, 1.0],
+                tileMode: TileMode.clamp,
               ),
-              FacebookSignInButton(
-                text: 'Đăng nhập với facebook',
-                onPressed: () {
-                  login(TypeLogin.FB);
-                },
-              )
-            ],
+            ),
           ),
-        ),
+          SingleChildScrollView(
+            child: Center(
+              child: Column(
+                children: <Widget>[
+                  SizedBox(
+                    child: Image.asset("assets/logo.png"),
+                    width: 200,
+                    height: 200,
+                  ),
+                  SizedBox(
+                    child: GoogleSignInButton(
+                      text: 'Đăng nhập với google',
+                      onPressed: () {
+                        login(TypeLogin.GG);
+                      },
+                    ),
+                    width: 259,
+                  ),
+                  SizedBox(
+                    child: FacebookSignInButton(
+                      text: 'Đăng nhập với facebook',
+                      onPressed: () {
+                        login(TypeLogin.FB);
+                      },
+                    ),
+                    width: 259,
+                  ),
+                ],
+              ),
+            ),
+          )
+        ],
       ),
     );
   }
@@ -63,9 +92,11 @@ class _LoginPageState extends State<LoginPage> {
       UserData userData = await UserDataService.instance
           .fetchUserData(accountModel.currentUser.uid);
       if (userData != null) {
-        Provider.of<LikeDao>(context).setIdLikedComics(userData.searchedComics);
+        print("userData ${userData.toMap()}");
+
+        Provider.of<LikeDao>(context).setIdLikedComics(userData.likedComics);
         Provider.of<FollowDao>(context)
-            .setIdFollowedComics(userData.searchedComics);
+            .setIdFollowedComics(userData.followedComics);
         Provider.of<SearchDao>(context)
             .setNameSearchedComics(userData.searchedComics);
       }

@@ -47,8 +47,16 @@ password = uetcomic123
 CN=Uet Comic, OU=UET, O=UET, L=Hanoi, ST=Hanoi, C=VN
 - genkey hash for fb login
 ```
-keytool -exportcert -alias androiddebugkey -keystore debug.keystore | openssl sha1 -binary | openssl base64  
+keytool -exportcert -alias androiddebugkey -keystore debug.keystore | openssl sha1 -binary | openssl base64
 ```
 ```
 keytool -exportcert -alias uetcomic -keystore ".\keys\debug.keystore" | openssl sha1 -binary | openssl base64
+```
+## Generate icon
+```
+flutter pub run flutter_launcher_icons:main
+```
+## Generate splash
+```
+flutter pub pub run flutter_native_splash:create
 ```

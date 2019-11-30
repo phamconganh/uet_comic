@@ -61,7 +61,7 @@ class ComicService {
     for (var i = 0; i < idFollowedComics.length; i++) {
       DocumentSnapshot documentSnapshot =
           await ref.document(idFollowedComics[i]).get();
-      if (documentSnapshot != null) {
+      if (documentSnapshot != null && documentSnapshot.data != null) {
         followedComicCovers.add(ComicCover.fromMap(documentSnapshot.data));
       }
     }

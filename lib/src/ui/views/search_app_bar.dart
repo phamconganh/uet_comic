@@ -38,7 +38,6 @@ class SearchAppBarDelegate extends SearchDelegate<String> {
   // Builds page to populate search results.
   @override
   Widget buildResults(BuildContext context) {
-    print(query);
     // can chinh lai provider
     return FutureBuilder<List<ComicCover>>(
       future: ComicService.instance.fetchComicCoversByName(query.toLowerCase()),

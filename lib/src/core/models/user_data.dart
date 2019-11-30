@@ -6,9 +6,9 @@ class UserData {
   UserData({this.followedComics, this.likedComics, this.searchedComics});
 
   factory UserData.fromMap(Map<dynamic, dynamic> map) => UserData(
-        followedComics: map['followedComics'] as List<String>,
-        likedComics: map['likedComics'] as List<String>,
-        searchedComics: map['searchedComics'] as List<String>,
+        followedComics: (map['followedComics'] as List).map((e)=>e.toString()).toList(),
+        likedComics: (map['likedComics'] as List).map((e)=>e.toString()).toList(),
+        searchedComics: (map['searchedComics'] as List).map((e)=>e.toString()).toList(),
       );
 
   Map<String, dynamic> toMap() => <String, dynamic>{

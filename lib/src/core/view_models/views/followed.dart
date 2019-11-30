@@ -20,7 +20,8 @@ class FollowedPageModel extends ChangeNotifier {
 
   Future fetchFollowedComics() async {
     setBusy(true);
-    _followedComics = await comicService.fetchFollowedComicCovers(followDao.idFollowedComics);
+    _followedComics =
+        await comicService.fetchFollowedComicCovers(followDao.idFollowedComics);
     setBusy(false);
   }
 
