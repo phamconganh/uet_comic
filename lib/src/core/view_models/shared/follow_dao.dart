@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:sembast/sembast.dart';
 import 'package:uet_comic/src/core/services/local.dart';
-import 'package:uet_comic/src/core/services/user_data.dart';
-import 'package:uet_comic/src/core/view_models/views/account.dart';
+// import 'package:uet_comic/src/core/services/user_data.dart';
+// import 'package:uet_comic/src/core/view_models/views/account.dart';
 
 class FollowDao extends ChangeNotifier {
   static const String FOLLOW_RECORD = 'follows';
   Future<Database> get _db async => await LocalService.instance.database;
   final _followsRecord = StoreRef.main().record(FOLLOW_RECORD);
 
-  final AccountModel accountModel;
+  // final AccountModel accountModel;
 
-  FollowDao({this.accountModel}) {
+  // FollowDao({this.accountModel}) {
+  //   init();
+  // }
+
+  FollowDao() {
     init();
   }
 
@@ -37,20 +41,22 @@ class FollowDao extends ChangeNotifier {
     }
   }
 
-  void add(String id) {
+  bool add(String id) {
     print("Before add follow: " + _idFollowedComics.toString());
     if (!_idFollowedComics.contains(id)) {
       _idFollowedComics.add(id);
       print("After add follow: " + _idFollowedComics.toString());
       notifyListeners();
       rewrite();
-      if(accountModel.isLogined) {
-        UserDataService.instance.addFollowedComic(accountModel.currentUser.uid, id);
-      }
+      return true;
+      // if(accountModel.isLogined) {
+      //   UserDataService.instance.addFollowedComic(accountModel.currentUser.uid, id);
+      // }
     }
+    return false;
   }
 
-  void remove(String id) {
+  bool remove(String id) {
     int index = _idFollowedComics.indexOf(id);
     print("Before remove follow: " + _idFollowedComics.toString());
     if (index > -1) {
@@ -58,10 +64,12 @@ class FollowDao extends ChangeNotifier {
       print("After remove follow: " + _idFollowedComics.toString());
       notifyListeners();
       rewrite();
-      if(accountModel.isLogined) {
-        UserDataService.instance.removeFollowedComic(accountModel.currentUser.uid, id);
-      }
+      return true;
+      // if(accountModel.isLogined) {
+      //   UserDataService.instance.removeFollowedComic(accountModel.currentUser.uid, id);
+      // }
     }
+    return false;
   }
 
   Future rewrite() async {

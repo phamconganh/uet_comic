@@ -5,9 +5,11 @@ import 'package:uet_comic/src/core/models/comic_cover.dart';
 import 'package:uet_comic/src/core/models/search.dart';
 import 'package:uet_comic/src/core/services/comic.dart';
 import 'package:uet_comic/src/core/services/search.dart';
+import 'package:uet_comic/src/core/services/user_data.dart';
 import 'package:uet_comic/src/core/view_models/shared/follow_dao.dart';
 import 'package:uet_comic/src/core/view_models/shared/like_dao.dart';
 import 'package:uet_comic/src/core/view_models/shared/search_dao.dart';
+import 'package:uet_comic/src/core/view_models/views/account.dart';
 import 'package:uet_comic/src/core/view_models/views/comic_detail.dart';
 import 'package:uet_comic/src/ui/views/comic_detail.dart';
 import 'package:uet_comic/src/ui/widgets/comic_cover.dart';
@@ -140,7 +142,11 @@ class SearchAppBarDelegate extends SearchDelegate<String> {
       suggestions: suggestions,
       onSelected: (String suggestion) {
         query = suggestion;
-        searchDao.add(query);
+        bool result = searchDao.add(query);
+        AccountModel accountModel = Provider.of(context);
+        if(result && accountModel.isLogined) {
+          UserDataService.instance.addSearchedComic(accountModel.currentUser.uid, query);
+        }
         showResults(context);
       },
     );

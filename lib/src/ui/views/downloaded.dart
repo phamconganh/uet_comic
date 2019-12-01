@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:uet_comic/src/core/models/chapter.dart';
+import 'package:uet_comic/src/core/models/comic.dart';
 import 'package:uet_comic/src/core/models/comic_cover.dart';
+import 'package:uet_comic/src/core/services/chapter.dart';
+import 'package:uet_comic/src/core/services/comic.dart';
 import 'package:uet_comic/src/core/services/local_file.dart';
 import 'package:uet_comic/src/core/view_models/shared/chapter_dao.dart';
 import 'package:uet_comic/src/core/view_models/shared/comic_dao.dart';
@@ -55,6 +59,62 @@ class _DownloadedPageState extends State<DownloadedPage> {
     }
   }
 
+  void onReloadComic(ComicCover comicCover) async {
+    bool confirm = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return Confirm(
+          header: 'Tải lại truyện',
+          message: "Bạn muốn tải lại truyện \"${comicCover.name}\"",
+          okText: 'Đồng ý',
+          cancelText: 'Hủy',
+        );
+      },
+    );
+    if (confirm) {
+      try {
+        ComicDao comicDao = Provider.of(context);
+        comicCover.isInProcess = true;
+        comicDao.update(comicCover, false);
+
+        Comic comic = await ComicService.instance.fetchComicById(comicCover.id);
+        List<Chapter> chapters =
+            await ChapterService.instance.fetchChaptersByIdComic(comicCover.id);
+
+        String imageLink = await LocalFileService.instance
+            .saveImage(url: comic.imageLink, comicFolder: comic.id);
+
+        comic.imageLink = imageLink;
+
+        ChapterDao chapterDao = Provider.of(context);
+
+        for (var i = 0; i < chapters.length; i++) {
+          Chapter chapter = chapters[i];
+          Chapter downloadedChapter = Chapter.fromMap(chapter.toMap());
+          downloadedChapter.images = [];
+          for (var j = 0; j < chapter.images.length; j++) {
+            var image = chapter.images[j];
+            print("Start download $image");
+            try {
+              image = await LocalFileService.instance
+                  .saveImage(url: image, comicFolder: comic.id);
+              downloadedChapter.images.add(image);
+            } catch (e) {
+              print("Error download $image");
+            }
+          }
+          if (downloadedChapter.images.isNotEmpty &&
+              chapter.images.isNotEmpty) {
+            chapterDao.add(downloadedChapter);
+          }
+        }
+        comicDao.update(comic, true);
+      } catch (e) {
+        print("Error download ${e.toString()}");
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<ComicDao>(
@@ -87,6 +147,7 @@ class _DownloadedPageState extends State<DownloadedPage> {
                         onChoosedComic: onChoosedComic,
                         isDownloaded: true,
                         onDeleteComic: onDeleteComic,
+                        onReloadComic: onReloadComic,
                         part: "downloaded_page",
                       ),
                     ],

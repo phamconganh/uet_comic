@@ -1,12 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:uet_comic/src/core/view_models/views/account.dart';
 
 class BasePageModel extends ChangeNotifier {
 
-  final AccountModel accountModel;
-
-  BasePageModel({this.accountModel});
+  BasePageModel();
 
   int _selectedIndex = 0;
   int get selectedIndex => _selectedIndex;

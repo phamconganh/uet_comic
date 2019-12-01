@@ -42,6 +42,24 @@ class ComicDao extends ChangeNotifier {
     return -1;
   }
 
+  void update(Comic comic, bool rewrite) async {
+    int index = _downloadedComics.indexWhere((e) => e.id == comic.id);
+    if (index > -1) {
+      _downloadedComics[index] = comic;
+      if (rewrite == true) {
+        _comicsStore.update(
+          await _db,
+          comic.toMap(),
+          finder: Finder(
+            filter: Filter.equals('id', comic.id),
+            limit: 1,
+          ),
+        );
+      }
+      notifyListeners();
+    }
+  }
+
   void unProcess(int key, String id) async {
     if (key != null && key > -1) {
       var record = _comicsStore.record(key);

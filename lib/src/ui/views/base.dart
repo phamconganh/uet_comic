@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:uet_comic/src/core/view_models/views/account.dart';
 import 'package:uet_comic/src/core/view_models/views/base.dart';
 import 'package:uet_comic/src/ui/views/downloaded.dart';
 import 'package:uet_comic/src/ui/views/filter.dart';
@@ -80,19 +81,23 @@ class _BasePageState extends State<BasePage> {
                   );
                 },
               ),
-              IconButton(
-                tooltip: 'Tài khoản và cài đặt',
-                icon: model.accountModel.isLogined == true
-                    ? ClipOval(
-                        child: Image.network(
-                          model.accountModel.currentUser.photoUrl,
-                        ),
-                      )
-                    : Icon(
-                        Icons.account_circle,
-                      ),
-                onPressed: showSettingPage,
-              ),
+              Consumer<AccountModel>(
+                builder: (_, accountModel, __) {
+                  return IconButton(
+                    tooltip: 'Tài khoản và cài đặt',
+                    icon: accountModel.isLogined == true
+                        ? ClipOval(
+                            child: Image.network(
+                              accountModel.currentUser.photoUrl,
+                            ),
+                          )
+                        : Icon(
+                            Icons.account_circle,
+                          ),
+                    onPressed: showSettingPage,
+                  );
+                },
+              )
             ],
           ),
           body: PageView(

@@ -6,10 +6,12 @@ import 'package:provider/provider.dart';
 import 'package:uet_comic/src/core/models/chapter.dart';
 import 'package:uet_comic/src/core/models/comic.dart';
 import 'package:uet_comic/src/core/services/local_file.dart';
+import 'package:uet_comic/src/core/services/user_data.dart';
 import 'package:uet_comic/src/core/view_models/shared/chapter_dao.dart';
 import 'package:uet_comic/src/core/view_models/shared/comic_dao.dart';
 import 'package:uet_comic/src/core/view_models/shared/follow_dao.dart';
 import 'package:uet_comic/src/core/view_models/shared/like_dao.dart';
+import 'package:uet_comic/src/core/view_models/views/account.dart';
 import 'package:uet_comic/src/core/view_models/views/base.dart';
 import 'package:uet_comic/src/core/view_models/views/comic_detail.dart';
 import 'package:uet_comic/src/core/view_models/views/filter.dart';
@@ -34,6 +36,7 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
   ComicDetailPageModel model;
   FollowDao followDao;
   LikeDao likeDao;
+  AccountModel accountModel;
 
   void onReadIndexChapter(List<Chapter> chapters, int index) {
     if (chapters.length == 0) return;
@@ -65,22 +68,39 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
 
   void follow() {
     model.follow();
-    followDao.add(model.comicDetail.id);
+    bool result = followDao.add(model.comicDetail.id);
+    print(accountModel);
+    if (result && accountModel.isLogined) {
+      UserDataService.instance
+          .addFollowedComic(accountModel.currentUser.uid, model.comicDetail.id);
+    }
   }
 
   void unFollow() {
     model.unfollow();
-    followDao.remove(model.comicDetail.id);
+    bool result = followDao.remove(model.comicDetail.id);
+    if (result && accountModel.isLogined) {
+      UserDataService.instance
+          .removeFollowedComic(accountModel.currentUser.uid, model.comicDetail.id);
+    }
   }
 
   void like() {
     model.like();
-    likeDao.add(model.comicDetail.id);
+    bool result = likeDao.add(model.comicDetail.id);
+    if (result && accountModel.isLogined) {
+      UserDataService.instance
+          .addLikedComic(accountModel.currentUser.uid, model.comicDetail.id);
+    }
   }
 
   void dislike() {
     model.dislike();
-    likeDao.remove(model.comicDetail.id);
+    bool result = likeDao.remove(model.comicDetail.id);
+    if (result && accountModel.isLogined) {
+      UserDataService.instance
+          .removeLikedComic(accountModel.currentUser.uid, model.comicDetail.id);
+    }
   }
 
   void onLoadMoreChapter() {
@@ -190,6 +210,9 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
     if (likeDao == null) {
       likeDao = Provider.of(context);
     }
+    if (accountModel == null) {
+      accountModel = Provider.of(context);
+    }
     return Scaffold(
       appBar: AppBar(
         title: Text("Chi tiết truyện"),
@@ -203,7 +226,7 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
               : SingleChildScrollView(
                   child: Column(
                     children: <Widget>[
-                      const Divider(),
+                      heightPadding,
                       model.comicDetail == null
                           ? Container()
                           : ResponsiveGridRow(
@@ -299,7 +322,10 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
           model.isDownloaded || model.comicDetail == null
               ? Container()
               : IconButton(
-                  icon: const Icon(Icons.cloud_download, color: Colors.green,),
+                  icon: const Icon(
+                    Icons.cloud_download,
+                    color: Colors.green,
+                  ),
                   onPressed: downloadAllChapter,
                 )
         ],
@@ -388,7 +414,7 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
                     model.comicDetail.name,
                     style: Theme.of(context).textTheme.headline,
                     overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
+                    maxLines: 2,
                   ),
                 ),
                 Padding(
@@ -455,14 +481,15 @@ class _ComicDetailPageState extends State<ComicDetailPage> {
                       Text(' ${model.comicDetail.follow}  '),
                       const Icon(
                         Icons.remove_red_eye,
-                        color: Colors.pink,
+                        color: Colors.orange,
                       ),
                       Text(' ${model.comicDetail.view}')
                     ],
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(left: 16, right: 10, bottom: 12),
+                  padding:
+                      const EdgeInsets.only(left: 16, right: 10, bottom: 12),
                   child: ExpandablePanel(
                     header: Text(
                       "Nội dung truyện",

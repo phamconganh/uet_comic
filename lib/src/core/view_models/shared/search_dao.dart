@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:sembast/sembast.dart';
 import 'package:uet_comic/src/core/services/local.dart';
-import 'package:uet_comic/src/core/services/user_data.dart';
-import 'package:uet_comic/src/core/view_models/views/account.dart';
+// import 'package:uet_comic/src/core/services/user_data.dart';
+// import 'package:uet_comic/src/core/view_models/views/account.dart';
 
 class SearchDao extends ChangeNotifier {
   static const String SEARCHES_RECORD = 'searches';
   Future<Database> get _db async => await LocalService.instance.database;
   final _searchesRecord = StoreRef.main().record(SEARCHES_RECORD);
 
-  final AccountModel accountModel;
+  // final AccountModel accountModel;
 
-  SearchDao({this.accountModel}) {
+  // SearchDao({this.accountModel}) {
+  //   init();
+  // }
+
+  SearchDao() {
     init();
   }
 
@@ -38,21 +42,23 @@ class SearchDao extends ChangeNotifier {
     }
   }
 
-  void add(String name) {
+  bool add(String name) {
     print("Before add SEARCH: " + _nameSearchedComics.toString());
     if (!_nameSearchedComics.contains(name)) {
       _nameSearchedComics.insert(0, name);
       print("After add SEARCH: " + _nameSearchedComics.toString());
       notifyListeners();
       rewrite();
-      if (accountModel.isLogined) {
-        UserDataService.instance
-            .addSearchedComic(accountModel.currentUser.uid, name);
-      }
+      return true;
+      // if (accountModel.isLogined) {
+      //   UserDataService.instance
+      //       .addSearchedComic(accountModel.currentUser.uid, name);
+      // }
     }
+    return false;
   }
 
-  void remove(String name) {
+  bool remove(String name) {
     int index = _nameSearchedComics.indexOf(name);
     print("Before remove SEARCH: " + _nameSearchedComics.toString());
     if (index > -1) {
@@ -60,11 +66,13 @@ class SearchDao extends ChangeNotifier {
       print("After remove SEARCH: " + _nameSearchedComics.toString());
       notifyListeners();
       rewrite();
-      if (accountModel.isLogined) {
-        UserDataService.instance
-            .removeSearchedComic(accountModel.currentUser.uid, name);
-      }
+      return true;
+      // if (accountModel.isLogined) {
+      //   UserDataService.instance
+      //       .removeSearchedComic(accountModel.currentUser.uid, name);
+      // }
     }
+    return false;
   }
 
   Future rewrite() async {

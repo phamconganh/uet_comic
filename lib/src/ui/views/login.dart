@@ -18,8 +18,29 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  AccountModel accountModel;
+  BasePageModel basePageModel;
+  LikeDao likeDao;
+  FollowDao followDao;
+  SearchDao searchDao;
+
   @override
   Widget build(BuildContext context) {
+    if (accountModel == null) {
+      accountModel = Provider.of(context);
+    }
+    if (searchDao == null) {
+      searchDao = Provider.of(context);
+    }
+    if (likeDao == null) {
+      likeDao = Provider.of(context);
+    }
+    if (followDao == null) {
+      followDao = Provider.of(context);
+    }
+    if (basePageModel == null) {
+      basePageModel = Provider.of(context);
+    }
     return Scaffold(
       appBar: AppBar(
         title: Text('Đăng nhập'),
@@ -85,23 +106,19 @@ class _LoginPageState extends State<LoginPage> {
       result = await AuthenticationService.instance.loginFacebook();
     }
     if (result == StatusLogin.SUCCESS) {
-      AccountModel accountModel = Provider.of(context);
       await accountModel.loadUser();
+      basePageModel.slideToPage(0);
       Navigator.popUntil(context, ModalRoute.withName('/'));
-      Provider.of<BasePageModel>(context).slideToPage(0);
+
       UserData userData = await UserDataService.instance
           .fetchUserData(accountModel.currentUser.uid);
       if (userData != null) {
         print("userData ${userData.toMap()}");
 
-        Provider.of<LikeDao>(context).setIdLikedComics(userData.likedComics);
-        Provider.of<FollowDao>(context)
-            .setIdFollowedComics(userData.followedComics);
-        Provider.of<SearchDao>(context)
-            .setNameSearchedComics(userData.searchedComics);
+        likeDao.setIdLikedComics(userData.likedComics);
+        followDao.setIdFollowedComics(userData.followedComics);
+        searchDao.setNameSearchedComics(userData.searchedComics);
       }
-      // Navigator.popUntil(context, ModalRoute.withName('/'));
-      // Provider.of<BasePageModel>(context).slideToPage(0);
     } else if (result == StatusLogin.ERROR && type == TypeLogin.FB) {
       await showDialog(
         context: context,

@@ -20,10 +20,25 @@ List<SingleChildCloneableWidget> getProviders(Config config) {
       value: config,
     ),
     ChangeNotifierProvider(
+      builder: (context) => AccountModel(),
+    ),
+    ChangeNotifierProvider(
       builder: (context) => ChapterDao(),
     ),
     ChangeNotifierProvider(
       builder: (context) => ComicDao(),
+    ),
+    ChangeNotifierProvider(
+      builder: (context) => LikeDao(),
+    ),
+    ChangeNotifierProvider(
+      builder: (context) => FollowDao(),
+    ),
+    ChangeNotifierProvider(
+      builder: (context) => SearchDao(),
+    ),
+    ChangeNotifierProvider(
+      builder: (context) => BasePageModel(),
     ),
     ChangeNotifierProvider(
       builder: (context) => SearchAppBarModel(),
@@ -37,26 +52,25 @@ List<SingleChildCloneableWidget> getProviders(Config config) {
     ChangeNotifierProvider(
       builder: (context) => HomePageModel(),
     ),
-    ChangeNotifierProvider(
-      builder: (context) => AccountModel(),
-    ),
   ];
 
   List<SingleChildCloneableWidget> dependentServices = [
-    ChangeNotifierProxyProvider<AccountModel, FollowDao>(
-      builder: (_, accountModel, __) => FollowDao(accountModel: accountModel),
-    ),
-    ChangeNotifierProxyProvider<AccountModel, LikeDao>(
-      builder: (_, accountModel, __) => LikeDao(accountModel: accountModel),
-    ),
-    ChangeNotifierProxyProvider<AccountModel, SearchDao>(
-      builder: (_, accountModel, __) => SearchDao(accountModel: accountModel),
-    ),
-    ChangeNotifierProxyProvider<AccountModel, BasePageModel>(
-      builder: (_, accountModel, __) => BasePageModel(accountModel: accountModel),
-    ),
+    // ChangeNotifierProxyProvider<AccountModel, FollowDao>(
+    //   builder: (_, accountModel, __) => FollowDao(accountModel: accountModel),
+    // ),
+    // ChangeNotifierProxyProvider<AccountModel, LikeDao>(
+    //   builder: (_, accountModel, __) => LikeDao(accountModel: accountModel),
+    // ),
+    // ChangeNotifierProxyProvider<AccountModel, SearchDao>(
+    //   builder: (_, accountModel, __) => SearchDao(accountModel: accountModel),
+    // ),
+    // ChangeNotifierProxyProvider<AccountModel, BasePageModel>(
+    //   builder: (_, accountModel, __) =>
+    //       BasePageModel(accountModel: accountModel),
+    // ),
     ChangeNotifierProxyProvider<AccountModel, SettingsPageModel>(
-      builder: (_, accountModel, __) => SettingsPageModel(accountModel: accountModel),
+      builder: (_, accountModel, __) =>
+          SettingsPageModel(accountModel: accountModel),
     ),
     ChangeNotifierProxyProvider<FollowDao, FollowedPageModel>(
       builder: (_, followDao, __) => FollowedPageModel(followDao: followDao),
