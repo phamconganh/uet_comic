@@ -70,4 +70,15 @@ class ComicDao extends ChangeNotifier {
       );
     }
   }
+
+  Future<List<String>> removeAll() async {
+    _comicsStore.delete(await _db);
+    List<String> idComics = [];
+    for (var i = 0; i < _downloadedComics.length; i++) {
+      idComics.add(_downloadedComics[i].id);
+    }
+    _downloadedComics = [];
+    notifyListeners();
+    return idComics;
+  }
 }

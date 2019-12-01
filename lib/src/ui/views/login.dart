@@ -46,7 +46,7 @@ class _LoginPageState extends State<LoginPage> {
               child: Column(
                 children: <Widget>[
                   SizedBox(
-                    child: Image.asset("assets/logo.png"),
+                    child: Image.asset("assets/icon.png"),
                     width: 200,
                     height: 200,
                   ),
@@ -87,8 +87,8 @@ class _LoginPageState extends State<LoginPage> {
     if (result == StatusLogin.SUCCESS) {
       AccountModel accountModel = Provider.of(context);
       await accountModel.loadUser();
-      Provider.of<BasePageModel>(context).slideToPage(0);
       Navigator.popUntil(context, ModalRoute.withName('/'));
+      Provider.of<BasePageModel>(context).slideToPage(0);
       UserData userData = await UserDataService.instance
           .fetchUserData(accountModel.currentUser.uid);
       if (userData != null) {
@@ -100,6 +100,8 @@ class _LoginPageState extends State<LoginPage> {
         Provider.of<SearchDao>(context)
             .setNameSearchedComics(userData.searchedComics);
       }
+      // Navigator.popUntil(context, ModalRoute.withName('/'));
+      // Provider.of<BasePageModel>(context).slideToPage(0);
     } else if (result == StatusLogin.ERROR && type == TypeLogin.FB) {
       await showDialog(
         context: context,

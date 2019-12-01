@@ -46,4 +46,8 @@ class ChapterDao extends ChangeNotifier {
       ),
     );
   }
+
+  void removeAll() async {
+    _chaptersStore.delete(await _db);
+  }
 }

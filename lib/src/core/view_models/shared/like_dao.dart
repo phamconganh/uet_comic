@@ -63,4 +63,10 @@ class LikeDao extends ChangeNotifier {
   Future rewrite() async {
     await _likesRecord.put(await _db, _idLikedComics);
   }
+
+  void removeAll() async {
+    _idLikedComics = [];
+    notifyListeners();
+    _likesRecord.delete(await _db);
+  }
 }

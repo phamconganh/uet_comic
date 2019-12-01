@@ -209,16 +209,19 @@ class _FilterPageState extends State<FilterPage> {
                   ),
                 ),
               ),
-              model.comicCovers.isNotEmpty ? Divider() : Container(),
               model.busy
                   ? Center(
                       child: LinearProgressIndicator(),
                     )
-                  : ComicCoverList(
-                      comicCovers: model.comicCovers,
-                      onChoosedComic: onChoosedComic,
-                      part: "filter_page",
-                    ),
+                  : model.comicCovers.isNotEmpty
+                      ? Card(
+                          child: ComicCoverList(
+                            comicCovers: model.comicCovers,
+                            onChoosedComic: onChoosedComic,
+                            part: "filter_page",
+                          ),
+                        )
+                      : Container(),
             ],
           );
         },

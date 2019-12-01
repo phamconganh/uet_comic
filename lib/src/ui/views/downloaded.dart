@@ -23,7 +23,8 @@ class _DownloadedPageState extends State<DownloadedPage> {
     ChapterDao chapterDao = Provider.of(context);
     comicDetailPageModel.clear();
     comicDetailPageModel.setComicDetail(comicCover);
-    comicDetailPageModel.setChapters(await chapterDao.getChaptersByComicId(comicCover.id));
+    comicDetailPageModel
+        .setChapters(await chapterDao.getChaptersByComicId(comicCover.id));
     comicDetailPageModel.setDownloaded(true);
 
     Navigator.of(context).push(
@@ -58,43 +59,41 @@ class _DownloadedPageState extends State<DownloadedPage> {
   Widget build(BuildContext context) {
     return Consumer<ComicDao>(
       builder: (__, model, ___) => model.downloadedComics.length == 0
-          ? ListView(
-              children: <Widget>[
-                const Divider(),
-                ListTile(
-                  leading: const Icon(Icons.folder, color: Colors.pink),
-                  title: const Text(
-                    "Bạn chưa tải truyện nào",
-                    style: TextStyle(color: Colors.pink),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                )
-              ],
+          ? Card(
+              child: ListTile(
+                leading: const Icon(Icons.folder, color: Colors.pink),
+                title: const Text(
+                  "Bạn chưa tải truyện nào",
+                  style: TextStyle(color: Colors.pink),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
             )
-          : ListView(
-              children: <Widget>[
-                const Divider(),
-                const ListTile(
-                  leading: const Icon(Icons.folder, color: Colors.pink),
-                  title: const Text(
-                    "Truyện đã tải",
-                    style: TextStyle(color: Colors.pink),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                Column(
-                  children: <Widget>[
-                    ComicCoverList(
-                      comicCovers: model.downloadedComics,
-                      onChoosedComic: onChoosedComic,
-                      isDownloaded: true,
-                      onDeleteComic: onDeleteComic,
-                      part: "downloaded_page",
+          : Card(
+              child: ListView(
+                children: <Widget>[
+                  const ListTile(
+                    leading: const Icon(Icons.folder, color: Colors.pink),
+                    title: const Text(
+                      "Truyện đã tải",
+                      style: TextStyle(color: Colors.pink),
+                      overflow: TextOverflow.ellipsis,
                     ),
-                  ],
-                ),
-                heightPadding,
-              ],
+                  ),
+                  Column(
+                    children: <Widget>[
+                      ComicCoverList(
+                        comicCovers: model.downloadedComics,
+                        onChoosedComic: onChoosedComic,
+                        isDownloaded: true,
+                        onDeleteComic: onDeleteComic,
+                        part: "downloaded_page",
+                      ),
+                    ],
+                  ),
+                  heightPadding,
+                ],
+              ),
             ),
     );
   }

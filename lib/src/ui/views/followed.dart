@@ -19,10 +19,11 @@ class _FollowedPageState extends State<FollowedPage> {
   void onChoosedComic(ComicCover comicCover, String part) {
     var model = Provider.of<ComicDetailPageModel>(context);
     model.onLoadData(comicCover.id);
-    model.setFollow(
-        Provider.of<FollowDao>(context).idFollowedComics.contains(comicCover.id));
-    model
-        .setLike(Provider.of<LikeDao>(context).idLikedComics.contains(comicCover.id));
+    model.setFollow(Provider.of<FollowDao>(context)
+        .idFollowedComics
+        .contains(comicCover.id));
+    model.setLike(
+        Provider.of<LikeDao>(context).idLikedComics.contains(comicCover.id));
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (BuildContext context) => ComicDetailPage(
@@ -40,43 +41,41 @@ class _FollowedPageState extends State<FollowedPage> {
               child: CircularProgressIndicator(),
             )
           : model.followedComics.length == 0
-              ? Column(
-                  children: <Widget>[
-                    const Divider(),
-                    ListTile(
-                      leading:
-                          const Icon(FontAwesomeIcons.heart, color: Colors.orange),
-                      title: const Text(
-                        "Bạn chưa theo dõi truyện nào",
-                        style: TextStyle(color: Colors.orange),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    )
-                  ],
+              ? Card(
+                  child: ListTile(
+                    leading: const Icon(FontAwesomeIcons.heart,
+                        color: Colors.orange),
+                    title: const Text(
+                      "Bạn chưa theo dõi truyện nào",
+                      style: TextStyle(color: Colors.orange),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
                 )
-              : ListView(
-                  children: <Widget>[
-                    const Divider(),
-                    const ListTile(
-                      leading:
-                          const Icon(FontAwesomeIcons.heart, color: Colors.orange),
-                      title: const Text(
-                        "Truyện đã theo dõi",
-                        style: TextStyle(color: Colors.orange),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    Column(
-                      children: <Widget>[
-                        ComicCoverList(
-                          comicCovers: model.followedComics,
-                          onChoosedComic: onChoosedComic,
-                          part: "followed_page",
+              : Card(
+                  child: ListView(
+                    children: <Widget>[
+                      const ListTile(
+                        leading: const Icon(FontAwesomeIcons.heart,
+                            color: Colors.orange),
+                        title: const Text(
+                          "Truyện đã theo dõi",
+                          style: TextStyle(color: Colors.orange),
+                          overflow: TextOverflow.ellipsis,
                         ),
-                      ],
-                    ),
-                    heightPadding,
-                  ],
+                      ),
+                      Column(
+                        children: <Widget>[
+                          ComicCoverList(
+                            comicCovers: model.followedComics,
+                            onChoosedComic: onChoosedComic,
+                            part: "followed_page",
+                          ),
+                        ],
+                      ),
+                      heightPadding,
+                    ],
+                  ),
                 ),
     );
   }

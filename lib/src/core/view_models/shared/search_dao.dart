@@ -27,7 +27,7 @@ class SearchDao extends ChangeNotifier {
     try {
       final _nameSearchedComicsTmp = await _searchesRecord.get(await _db);
       print(_nameSearchedComicsTmp);
-      if(_nameSearchedComicsTmp != null) {
+      if (_nameSearchedComicsTmp != null) {
         // do _nameSearchedComicsTmp la read-only
         _nameSearchedComics = List.from(_nameSearchedComicsTmp);
         print("_nameSearchedComics: $_nameSearchedComics");
@@ -45,8 +45,9 @@ class SearchDao extends ChangeNotifier {
       print("After add SEARCH: " + _nameSearchedComics.toString());
       notifyListeners();
       rewrite();
-      if(accountModel.isLogined) {
-        UserDataService.instance.addSearchedComic(accountModel.currentUser.uid, name);
+      if (accountModel.isLogined) {
+        UserDataService.instance
+            .addSearchedComic(accountModel.currentUser.uid, name);
       }
     }
   }
@@ -59,13 +60,20 @@ class SearchDao extends ChangeNotifier {
       print("After remove SEARCH: " + _nameSearchedComics.toString());
       notifyListeners();
       rewrite();
-      if(accountModel.isLogined) {
-        UserDataService.instance.removeSearchedComic(accountModel.currentUser.uid, name);
+      if (accountModel.isLogined) {
+        UserDataService.instance
+            .removeSearchedComic(accountModel.currentUser.uid, name);
       }
     }
   }
 
   Future rewrite() async {
     await _searchesRecord.put(await _db, _nameSearchedComics);
+  }
+
+  void removeAll() async {
+    _nameSearchedComics = [];
+    notifyListeners();
+    _searchesRecord.delete(await _db);
   }
 }

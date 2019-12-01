@@ -67,4 +67,10 @@ class FollowDao extends ChangeNotifier {
   Future rewrite() async {
     await _followsRecord.put(await _db, _idFollowedComics);
   }
+
+  void removeAll() async {
+    _idFollowedComics = [];
+    notifyListeners();
+    _followsRecord.delete(await _db);
+  }
 }

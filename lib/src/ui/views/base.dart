@@ -83,15 +83,10 @@ class _BasePageState extends State<BasePage> {
               IconButton(
                 tooltip: 'Tài khoản và cài đặt',
                 icon: model.accountModel.isLogined == true
-                    ?
-                    // CircleAvatar(
-                    //     radius: 18,
-                    //     child: ClipOval(
-                    //       child:
-                          Image.network(
-                            model.accountModel.currentUser.photoUrl,
-                        //   ),
-                        // ),
+                    ? ClipOval(
+                        child: Image.network(
+                          model.accountModel.currentUser.photoUrl,
+                        ),
                       )
                     : Icon(
                         Icons.account_circle,
